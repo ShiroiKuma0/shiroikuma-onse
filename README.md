@@ -1,52 +1,43 @@
-# VOICEVOX TTS Engine for Android
+<div align="center">
 
-**日本語**
-## 説明
-このソフトウェアはAndroidの読み上げをVOICEVOXに置き換えるソフトウェアです。VOICEVOX COREのAndroid用AARファイルを使用しています。このソフトウェアはMITライセンスで提供されています。
-デフォルトでは冥鳴ひまりの音声が使用されます。
+<img src="shiroikuma/icon/onse-icon-512.png" width="120" alt="白い熊 音声 icon" />
 
-## ビルド方法
-VOICEVOX COREのJavaパッケージ・VOICEVOX ONNX Runtime・音声モデルは、リポジトリには含めていません。ビルドの前に次のタスクで取得します。
+# 白い熊 音声
 
-```console
-./gradlew :app:downloadVoicevox
-./gradlew assembleDebug
-```
+**VOICEVOX on Android — a system text-to-speech voice and an intent-driven audio render service for the 白い熊 sister apps.**
 
-取得したファイルは次の場所に置かれます（どれもgitの管理対象外）。
+A fork of [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_TTS_Engine_For_Android).
 
-- VOICEVOX CORE: `~/.m2/repository`（`mavenLocal()` から解決されます）
-- VOICEVOX ONNX Runtime: `app/src/main/jniLibs/`
-- 音声モデル: `app/src/main/res/raw/model.vvm`（[voicevox_vvm](https://github.com/VOICEVOX/voicevox_vvm/releases) の1.vvm）
+Installs **side-by-side** with the original (app id `shiroikuma.onse`).
 
-## ファイル等について (res/raw)
-open_jtalk_dict.zipは、OpenJTalkの辞書です。
+**📥 [All releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)**
 
-**English**
-## Introduction
-This is software that replaces Android reading with VOICEVOX, using VOICEVOX CORE AAR files for Android. This software is provided under the MIT license.
-By default, the voice of "Himari Meimei" is used.
+</div>
+
+## What it is
+
+- **A system TTS engine.** Pick **白い熊 音声** in Android's text-to-speech settings and every app that
+  reads aloud speaks with VOICEVOX — fully offline, on the phone.
+- **A render service for sister apps** *(in development)*: other 白い熊 apps hand it a batch of
+  Japanese sentences by intent and get back OGG/Opus files — first of all the 言語島 Japanese Language
+  Islands suite in 白い熊 自由作業盤.
+- **The 白い熊 voice** *(in development)*: VOICEVOX No.7 / 読み聞かせ, the same voice the PC side uses.
+
+See [`docs/PLAN.md`](docs/PLAN.md) for the roadmap and [`CHANGELOG.md`](CHANGELOG.md) for what changed.
 
 ## Build
-The VOICEVOX CORE Java packages, VOICEVOX ONNX Runtime and the voice model are not checked in. Fetch them before building:
 
-```console
-./gradlew :app:downloadVoicevox
-./gradlew assembleDebug
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ANDROID_HOME=$HOME/android-sdk
+bash ./gradlew :app:downloadVoicevox     # once: VOICEVOX CORE into the local Maven repository
+bash ./gradlew buildFork                 # signed arm64-v8a APK (needs keystore.properties)
 ```
 
-## Files (res/raw)
-model.vvm is 1.vvm from [voicevox_vvm](https://github.com/VOICEVOX/voicevox_vvm/releases) (downloaded by `downloadVoicevox`).
+## Credits and licences
 
-## 各種権利表記
-VOICEVOX：冥鳴ひまり 
-
-VOICEVOX CORE: https://github.com/VOICEVOX/voicevox_core (MIT License)
-
-OpenJTalk: https://open-jtalk.sourceforge.net/
-Copyright (c) 2009, Nara Institute of Science and Technology, Japan.
-
-ONNX Runtime: https://github.com/microsoft/onnxruntime
-VOICEVOX ONNX Runtime: https://github.com/VOICEVOX/onnxruntime-builder
-
-Gson: https://github.com/google/gson
+- Built on [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_TTS_Engine_For_Android) — MIT License (see [`LICENSE`](LICENSE)).
+- Voice: **VOICEVOX:冥鳴ひまり**.
+- [VOICEVOX CORE](https://github.com/VOICEVOX/voicevox_core) — MIT License.
+- [OpenJTalk](https://open-jtalk.sourceforge.net/) — Copyright (c) 2009, Nara Institute of Science and Technology, Japan.
+- [VOICEVOX ONNX Runtime](https://github.com/VOICEVOX/onnxruntime-builder) (from [ONNX Runtime](https://github.com/microsoft/onnxruntime)) — MIT License.
+- [Gson](https://github.com/google/gson) — Apache License 2.0.

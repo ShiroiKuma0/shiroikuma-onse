@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 白い熊 音声 — flavour manifest overlay. Upstream hard-codes "VOICEVOX TTS Engine" as the
+     application and engine-service labels; replace both with our name without editing upstream's
+     manifest. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:label="@string/app_name"
+        tools:replace="android:label">
+        <service
+            android:name=".VoicevoxTextToSpeechServiceImplement"
+            android:label="@string/app_name"
+            tools:replace="android:label" />
+    </application>
+
+</manifest>
