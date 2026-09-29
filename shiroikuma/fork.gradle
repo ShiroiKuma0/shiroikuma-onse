@@ -1,0 +1,118 @@
+// ---------------------------------------------------------------------------------------------
+// shiroikuma-onse fork layer — identity, signing, versioning and the buildFork pipeline.
+//
+// Applied from app/build.gradle.kts by ONE added line at its very end, so the whole fork layer
+// lives in a file upstream never touches:
+//
+//   - the `onse` product flavour: app id shiroikuma.onse, label 白い熊 音声; its source set
+//     app/src/onse/ carries our resources (which win over main's by name) and code;
+//   - signing from the gitignored keystore.properties;
+//   - versionName "<upstream versionName>+<BUILD_NUMBER padded to 3>", versionCode
+//     "<upstream versionCode> * 10000 + BUILD_NUMBER", from shiroikuma/fork.properties;
+//   - `buildFork`: assemble onseRelease, copy the APK to ~/tmp under the house name, bump.
+//
+// The code namespace stays upstream's `dev.ztssst.voicevox_tts` — never rename it.
+// See .claude/skills/build-apk.
+// ---------------------------------------------------------------------------------------------
+
+def repoRoot = rootProject.rootDir
+
+// --- Signing ---------------------------------------------------------------------------------
+def keystoreProps = new Properties()
+def keystoreFile = new File(repoRoot, 'keystore.properties')
+if (keystoreFile.exists()) {
+    keystoreFile.withInputStream { keystoreProps.load(it) }
+} else {
+    println "shiroikuma: no keystore.properties — the release APK will not be signed with our key."
+}
+
+// --- Versioning ------------------------------------------------------------------------------
+// Upstream's pair is android.defaultConfig.versionName / versionCode in app/build.gradle.kts,
+// already evaluated when this script is applied (it is applied last). Read, never edited.
+def forkProps = new Properties()
+def forkPropsFile = new File(repoRoot, 'shiroikuma/fork.properties')
+forkPropsFile.withInputStream { forkProps.load(it) }
+
+def upstreamVersionName = android.defaultConfig.versionName
+def upstreamVersionCode = android.defaultConfig.versionCode as int
+def forkBuildNumber = forkProps.getProperty('BUILD_NUMBER', '1').trim() as int
+def forkLastBuiltVersionCode = forkProps.getProperty('LAST_BUILT_VERSION_CODE', '0').trim() as int
+
+// Zero-padded in the NAME only, so +002 sorts before +010; versionCode keeps the plain integer.
+def forkVersionName = "${upstreamVersionName}+${String.format('%03d', forkBuildNumber)}"
+def forkVersionCode = upstreamVersionCode * 10000 + forkBuildNumber
+println "shiroikuma-onse: ${forkVersionName} (${forkVersionCode})"
+
+// --- The onse flavour ------------------------------------------------------------------------
+android {
+    signingConfigs {
+        onse {
+            if (keystoreFile.exists()) {
+                storeFile file(keystoreProps.getProperty('storeFile'))
+                storePassword keystoreProps.getProperty('storePassword')
+                keyAlias keystoreProps.getProperty('keyAlias')
+                keyPassword keystoreProps.getProperty('keyPassword')
+            }
+        }
+    }
+    flavorDimensions "fork"
+    productFlavors {
+        onse {
+            dimension "fork"
+            applicationId "shiroikuma.onse"
+            versionName forkVersionName
+            versionCode forkVersionCode
+            ndk {
+                abiFilters "arm64-v8a"
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.onse
+        }
+    }
+}
+
+// --- buildFork -------------------------------------------------------------------------------
+tasks.register("buildFork") {
+    group = "build"
+    description = "Build the signed onse release APK, copy it to ~/tmp, and bump BUILD_NUMBER."
+    dependsOn("assembleOnseRelease")
+
+    // Captured at configuration time — the configuration cache forbids `project` in actions.
+    def releaseApkDir = new File(projectDir, "build/outputs/apk/onse/release")
+    def propsFile = forkPropsFile
+    def targetDir = new File(System.getProperty("user.home"), "tmp")
+    def apkName = "shiroikuma-onse_${forkVersionName}_arm64-v8a.apk"
+    def builtCode = forkVersionCode
+    def lastBuiltCode = forkLastBuiltVersionCode
+    def nextBuildNumber = forkBuildNumber + 1
+
+    doFirst {
+        if (builtCode <= lastBuiltCode) {
+            throw new GradleException("versionCode ${builtCode} would not exceed the highest already " +
+                    "built (${lastBuiltCode}). Raise BUILD_NUMBER in shiroikuma/fork.properties.")
+        }
+    }
+
+    doLast {
+        def apks = releaseApkDir.listFiles({ d, n -> n.endsWith(".apk") } as FilenameFilter)
+        if (!apks) {
+            throw new GradleException("No APK found in ${releaseApkDir}")
+        }
+        targetDir.mkdirs()
+        def target = new File(targetDir, apkName)
+        if (target.exists()) {
+            throw new GradleException("${target} already exists — never overwrite a build.")
+        }
+        java.nio.file.Files.copy(apks.sort { it.name }[0].toPath(), target.toPath())
+        println "\u001B[1;36m>>> ${target.absolutePath}\u001B[0m"
+        println "\u001B[1;36m>>> versionCode ${builtCode}\u001B[0m"
+
+        propsFile.text = propsFile.text
+                .replaceAll(/(?m)^BUILD_NUMBER=\d+$/, "BUILD_NUMBER=${nextBuildNumber}")
+                .replaceAll(/(?m)^LAST_BUILT_VERSION_CODE=\d+$/, "LAST_BUILT_VERSION_CODE=${builtCode}")
+        println "\u001B[1;36m>>> BUILD_NUMBER bumped to ${nextBuildNumber}\u001B[0m"
+    }
+}

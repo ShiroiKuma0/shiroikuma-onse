@@ -120,3 +120,4 @@ dependencies {
     // gson
     implementation(libs.gson)
 }
+apply(from = "$rootDir/shiroikuma/fork.gradle")   // shiroikuma-onse fork layer — keep last
