@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 白い熊 音声 — flavour overrides of upstream's strings (flavour resources win by name). -->
+<resources>
+    <!-- The app label and the engine name Android's text-to-speech settings show. -->
+    <string name="app_name">白い熊 音声</string>
+</resources>
