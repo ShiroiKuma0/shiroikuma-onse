@@ -34,13 +34,13 @@ A generic VOICEVOX sister app:
 ## Step order (白い熊, 2026-09-29)
 
 1. ✅ Repo, remotes, branches, fork layer, keystore, skills — committed and pushed.
-2. Our black-yellow traced icon: PNG previews of ours and the original in `~/tmp` → 白い熊 confirms.
-3. De-branding: remove the upstream name, GitHub links and branding everywhere (all pages, Help …),
+2. ✅ Our black-yellow traced icon: PNG previews of ours and the original in `~/tmp` → 白い熊 confirms.
+3. ✅ De-branding: remove the upstream name, GitHub links and branding everywhere (all pages, Help …),
    put in 白い熊 音声, our GitHub link and our icon wherever an icon shows.
-4. First build, then push.
-5. Bring the UI in line with the sister repos (study `shiroikuma-denwa`, `shiroikuma-messeji`, …) and
+4. ✅ First build, then push.
+5. ✅ Bring the UI in line with the sister repos (study `shiroikuma-denwa`, `shiroikuma-messeji`, …) and
    build the **白い熊 音声 UI** page (below).
-6. The render contract, OGG encoding, No.7 model, core 0.17.
+6. The render contract and OGG encoding (✅ core 0.17, No.7 bundled, every voice downloadable with bundled samples).
 7. The backup-automation hand-off from `shiroikuma-jiyusagyoban`.
 
 ## The 白い熊 音声 UI page — 白い熊's requirements (2026-09-29)

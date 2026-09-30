@@ -3,3 +3,6 @@
 # downloadVoicevox タスクで取得するファイル
 /src/main/jniLibs/
 /src/main/res/raw/model.vvm
+
+# The No.7 voice model, fetched by the fork layer (fetchOnseModel)
+/src/onse/res/raw/model.vvm

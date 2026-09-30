@@ -50,18 +50,19 @@ export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export ANDROID_HOME=/home/shiroikuma/android-sdk
 ```
 
-Upstream's `gradlew` is committed **without the executable bit** — always `bash ./gradlew …`; do not
-`chmod` it (a mode change on an upstream file is a needless rebase conflict).
+Upstream PR #19 (folded in) made `gradlew` executable; `bash ./gradlew …` works either way.
 
 ## Steps
 
-1. **VOICEVOX CORE in the local Maven repo?** Upstream resolves `jp.hiroshiba.voicevoxcore` from
-   `mavenLocal()`, filled by its `downloadVoicevox` task. On a fresh machine, or after the core
-   version in `gradle/libs.versions.toml` moves, run it once:
+1. **Binaries are fetched automatically.** `preBuild` depends on upstream's `downloadVoicevox`
+   (VOICEVOX CORE into `mavenLocal()`, VOICEVOX ONNX Runtime into `app/src/main/jniLibs`) and on our
+   `fetchOnseModel` (the No.7 model `6.vvm` into `app/src/onse/res/raw/model.vvm`, verified against
+   the SHA-256 in `app/src/onse/assets/voices/catalog.json`, taken from `.scratch/vvm-<release>/`
+   when cached). All of it is gitignored.
 
-   ```bash
-   bash ./gradlew :app:downloadVoicevox --console=plain < /dev/null
-   ```
+   The voice catalogue and the 217 bundled samples are generated on the PC — re-run only when the
+   voicevox_vvm release moves: `.scratch/venv/bin/python shiroikuma/voices/gen-voices.py`
+   (the script's docstring lists its inputs).
 
 2. **Note the version you are about to produce:**
 

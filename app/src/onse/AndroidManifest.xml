@@ -1,17 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 白い熊 音声 — flavour manifest overlay. Upstream hard-codes "VOICEVOX TTS Engine" as the
-     application and engine-service labels; replace both with our name without editing upstream's
-     manifest. -->
+<!-- 白い熊 音声 — flavour manifest overlay (upstream's manifest stays untouched):
+     - our name in place of upstream's hard-coded "VOICEVOX TTS Engine" labels;
+     - our launcher activity (upstream has none) and our multi-voice TTS service in place of
+       upstream's single-voice service and its latency test screen;
+     - all-files access, for the backup directory (and, later, the render service's output). -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
     <application
+        android:name="shiroikuma.onse.OnseApp"
         android:label="@string/app_name"
         tools:replace="android:label">
+
+        <activity
+            android:name="shiroikuma.onse.OnseActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <service
-            android:name=".VoicevoxTextToSpeechServiceImplement"
+            android:name="shiroikuma.onse.voice.OnseTtsService"
+            android:exported="true"
             android:label="@string/app_name"
-            tools:replace="android:label" />
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="android.intent.action.TTS_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.speech.tts"
+                android:resource="@xml/tts_config" />
+        </service>
+
+        <service
+            android:name="dev.ztssst.voicevox_tts.VoicevoxTextToSpeechServiceImplement"
+            tools:node="remove" />
+        <activity
+            android:name="dev.ztssst.voicevox_tts.MainActivity"
+            tools:node="remove" />
     </application>
 
 </manifest>
