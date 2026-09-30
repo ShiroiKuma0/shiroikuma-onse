@@ -71,6 +71,34 @@ Extras `request_id` (and `token` if required). Stops that request at its next it
 items already answered stay on disk. The request then answers `ERROR:cancelled|<ok>|<failed>|<total>`.
 The cancel itself answers nothing; for an unknown id it is a silent no-op.
 
+## Ping — broadcast `shiroikuma.onse.action.PING`
+
+Extras `reply_action`, `reply_package`, optional `request_id` and `token`. Answers at once on
+`reply_action` with `event=pong` and:
+
+| extra | value |
+| --- | --- |
+| `result` | `OK`, or the gate's `ERROR:automation disabled` / `ERROR:bad token` |
+| `version` | 音声's versionName |
+| `styles` | installed readable style ids, comma-separated |
+| `storage` | `true` when All-Files access is granted (renders need it) |
+| `battery_exempt` | `true` when 音声 is exempt from battery optimisation (cold renders need it) |
+
+No pong within a few seconds means 音声 is not running and could not be started — e.g. EMUI's App
+launch refused it — as opposed to a render that is merely slow.
+
+## Waking 音声
+
+Before the first request, wake the process: a data-door `describe` call on the provider
+`shiroikuma.onse.automation` (measured ≈70 ms, and it works cold), or start the invisible exported
+activity `shiroikuma.onse/shiroikuma.onse.WarmActivity` (Theme.NoDisplay; finishes in onCreate).
+Then `PING`, then `RENDER`.
+
+**A cold render needs 音声 exempt from battery optimisation.** Measured on the Mate XT
+(2026-09-30): without the exemption EMUI refuses the render service's foreground start
+(`ERROR:no-foreground-start`) even with a temporary allowlist grant; with it, a cold 3-sentence
+render finished in 13.0 s. 音声 checks and requests the exemption every time it is opened.
+
 ## Behaviour
 
 - Requests queue and run one at a time on a foreground service; synthesis takes a few seconds per

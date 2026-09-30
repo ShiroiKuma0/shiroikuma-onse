@@ -49,6 +49,12 @@ Built on upstream `master` at `bfbe4f2` (2026-01-25).
   `CANCEL_RENDER`; requests queue on a foreground service.
 - **All-files access is checked on every entry** into the app and requested with an explanation.
 
+- **Integration with 言語島:** `shiroikuma.onse.action.PING` (answers `event=pong` with version,
+  installed styles, storage and battery-exemption state), an invisible exported
+  `WarmActivity` to wake the process, and a **battery-optimisation check on every entry** —
+  without the exemption EMUI refuses the render service's start from the background (measured on
+  the Mate XT); the dialog requests it and names the Huawei App-launch settings.
+
 # Upstream — VOICEVOX TTS Engine for Android
 
 ## Unreleased on `master` (2025-03-17 – 2026-01-25)
