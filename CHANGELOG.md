@@ -33,6 +33,14 @@ Built on upstream `master` at `bfbe4f2` (2026-01-25).
   Borders & shape, Main screen, Settings page, Reset — every item live-previewed, black-yellow by
   default. Backups are `shiroikuma-onse_<yyyy-MM-dd_HH-mm-ss>.zip`.
 
+- **保存復元 automation — sister-app contract v2.** `shiroikuma.onse.action.EXPORT_STATE` /
+  `LIST_CATEGORIES` / `CANCEL_EXPORT` on an exported receiver, the export on a foreground service
+  (guarded starts, keyed `ERROR:no-storage-access` / `no-directory` / `no-foreground-start`,
+  real-count progress, one terminal reply); the data door `shiroikuma.onse.automation` for
+  白い熊 応用管理 and 自由作業盤 (exact name, uid and pinned certificate; descriptor streaming with a
+  heartbeat; spooled, durable import); the gate ON with the token opt-in — its three rows in the
+  Export / Import section. Voices a restore lists are re-downloaded when the app next opens.
+
 # Upstream — VOICEVOX TTS Engine for Android
 
 ## Unreleased on `master` (2025-03-17 – 2026-01-25)

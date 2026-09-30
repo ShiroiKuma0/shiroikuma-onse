@@ -47,6 +47,13 @@ object VoiceStore {
     /** Refresh the state map from disk (called when the screen opens). */
     fun refresh(context: Context) {
         val catalog = VoiceCatalog.get(context)
+        // Voices a restore asked for: download what is still missing, forget what has arrived.
+        val pending = shiroikuma.onse.ui.Backup.pendingVoices(context)
+        if (pending.isNotEmpty()) {
+            val stillMissing = catalog.models.filter { it.file in pending && !isInstalled(context, it) }
+            shiroikuma.onse.ui.Backup.setPendingVoices(context, stillMissing.map { it.file }.toSet())
+            stillMissing.forEach { download(context, it) }
+        }
         _states.value = catalog.models.associate { m ->
             m.file to (_states.value[m.file]?.takeIf { it is State.Downloading }
                 ?: if (isInstalled(context, m)) State.Installed else State.NotInstalled)

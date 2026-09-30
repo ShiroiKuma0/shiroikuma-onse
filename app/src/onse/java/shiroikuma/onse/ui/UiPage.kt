@@ -57,6 +57,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import shiroikuma.onse.automation.AutomationAuth
 import shiroikuma.onse.voice.VoiceCatalog
 import shiroikuma.onse.voice.VoicePlayer
 import shiroikuma.onse.voice.VoiceSettings
@@ -83,6 +86,9 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
     var eximRefresh by remember { mutableIntStateOf(0) }
     var resetConfirm by remember { mutableStateOf(false) }
     var toast by remember { mutableStateOf<String?>(null) }
+    var automationEnabled by remember { mutableStateOf(AutomationAuth.enabled(context)) }
+    var automationRequireToken by remember { mutableStateOf(AutomationAuth.requireToken(context)) }
+    var automationToken by remember { mutableStateOf(AutomationAuth.token(context)) }
 
     // Queried on opening the page, on every return to it, and after any change.
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -134,6 +140,41 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
                         "Back up or restore everything settable — this UI, the voice settings and the list of installed voices — as one ZIP.",
                         Modifier.weight(1f),
                     )
+                }
+            }
+
+            // Automation lives INSIDE this section, below the export rows (family contract v2 §2).
+            item {
+                SwitchRow(
+                    0, p, "Automation export",
+                    "Let sister apps (白い熊 自由作業盤's 保存復元) trigger this app's export, and let 白い熊 応用管理 back its data up and put it back. On by default — turn it off to close this app to automation entirely.",
+                    automationEnabled,
+                ) { automationEnabled = it; AutomationAuth.setEnabled(context, it) }
+            }
+            item {
+                SwitchRow(
+                    0, p, "Use authorization token?",
+                    "Off: any sister app may drive the automation. On: a caller must also present the token below. Either way the data door checks the calling app's package, uid and signing certificate.",
+                    automationRequireToken,
+                ) { automationRequireToken = it; AutomationAuth.setRequireToken(context, it) }
+            }
+            if (automationRequireToken) {
+                item {
+                    val clipboard = LocalClipboardManager.current
+                    RowScaffold(0, p, onClick = {
+                        clipboard.setText(AnnotatedString(automationToken))
+                        toast = "Automation token copied"
+                    }) {
+                        TitledText("Automation token (tap to copy)", AutomationAuth.abbreviated(automationToken), Modifier.weight(1f), summaryBold = true)
+                        Text(
+                            "Regenerate",
+                            Modifier.clickable {
+                                automationToken = AutomationAuth.regenerate(context)
+                                toast = "Automation token regenerated — update pasted copies"
+                            }.padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+                            color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 14.sp,
+                        )
+                    }
                 }
             }
 
