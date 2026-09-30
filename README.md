@@ -39,5 +39,5 @@ bash ./gradlew buildFork                 # signed arm64-v8a APK (needs keystore.
 - Voice: **VOICEVOX:冥鳴ひまり**.
 - [VOICEVOX CORE](https://github.com/VOICEVOX/voicevox_core) — MIT License.
 - [OpenJTalk](https://open-jtalk.sourceforge.net/) — Copyright (c) 2009, Nara Institute of Science and Technology, Japan.
-- [ONNX Runtime](https://github.com/microsoft/onnxruntime) — MIT License.
+- [VOICEVOX ONNX Runtime](https://github.com/VOICEVOX/onnxruntime-builder) (from [ONNX Runtime](https://github.com/microsoft/onnxruntime)) — MIT License.
 - [Gson](https://github.com/google/gson) — Apache License 2.0.
