@@ -39,9 +39,10 @@ The agreed design and the backlog live in **`docs/PLAN.md`** — read it first.
 | --- | --- | --- |
 | applicationId | `shiroikuma.onse` | `shiroikuma/fork.gradle` → flavour `onse` |
 | App label | `白い熊 音声` | flavour resources in `app/src/onse/res` (de-branding step) |
-| Our settings page | **`白い熊 音声 UI`** — every configurable item of the fork; opened by a **long-press on the Settings cog** of the main screen | to be built (see `docs/PLAN.md`) |
+| Our settings page | **`白い熊 音声 UI`** — every configurable item of the fork; opened by a **tap or long-press on the Settings cog** of the main screen | `app/src/onse/java/shiroikuma/onse/ui/UiPage.kt` |
 | Flavour | `onse` — arm64-v8a only | `shiroikuma/fork.gradle` |
-| Launcher icon | our black-yellow traced icon | `shiroikuma/icon/` (to be made) |
+| Launcher icon | upstream robot head traced as yellow line-art on black, sound arcs, 音 | `shiroikuma/icon/trace-icon.py` → `onse-icon.svg` → `gen-icons.py` into `app/src/onse/res` |
+| Voices | No.7 (`6.vvm`) bundled; every voicevox_vvm model downloadable; catalogue + samples | `app/src/onse/assets/voices/`, `shiroikuma/voices/gen-voices.py`, `app/src/onse/java/shiroikuma/onse/voice/` |
 | Keystore | `~/.android-keystores/shiroikuma-onse.jks`, alias `onse` | `keystore.properties` (gitignored) |
 
 ## Build (summary — details in `build-apk`)

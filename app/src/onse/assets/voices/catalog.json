@@ -1,0 +1,2131 @@
+{
+ "release": "0.17.0",
+ "defaultStyle": 31,
+ "sampleText": "こんにちは。これは声の見本です。",
+ "models": [
+  {
+   "file": "0.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/0.vvm",
+   "size": 59308488,
+   "sha256": "ecd35374d4182cd883cba5040376f7f888cc6ba248b1c2f4cea07cdb34bb1318",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "四国めたん",
+     "uuid": "7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff",
+     "styles": [
+      {
+       "id": 2,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/2.ogg"
+      },
+      {
+       "id": 0,
+       "name": "あまあま",
+       "type": "streaming_talk",
+       "sample": "samples/0.ogg"
+      },
+      {
+       "id": 6,
+       "name": "ツンツン",
+       "type": "streaming_talk",
+       "sample": "samples/6.ogg"
+      },
+      {
+       "id": 4,
+       "name": "セクシー",
+       "type": "streaming_talk",
+       "sample": "samples/4.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ずんだもん",
+     "uuid": "388f246b-8c41-4ac1-8e2d-5d79f3ff56d9",
+     "styles": [
+      {
+       "id": 3,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/3.ogg"
+      },
+      {
+       "id": 1,
+       "name": "あまあま",
+       "type": "streaming_talk",
+       "sample": "samples/1.ogg"
+      },
+      {
+       "id": 7,
+       "name": "ツンツン",
+       "type": "streaming_talk",
+       "sample": "samples/7.ogg"
+      },
+      {
+       "id": 5,
+       "name": "セクシー",
+       "type": "streaming_talk",
+       "sample": "samples/5.ogg"
+      }
+     ]
+    },
+    {
+     "name": "春日部つむぎ",
+     "uuid": "35b2c544-660e-401e-b503-0e14c635303a",
+     "styles": [
+      {
+       "id": 8,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/8.ogg"
+      }
+     ]
+    },
+    {
+     "name": "雨晴はう",
+     "uuid": "3474ee95-c274-47f9-aa1a-8322163d96f1",
+     "styles": [
+      {
+       "id": 10,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "1.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/1.vvm",
+   "size": 60571189,
+   "sha256": "e16ffb6fc3e13e1be4ebc3831cc39df019cbac96b28bbed7653a4bb51c4d7d5d",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "冥鳴ひまり",
+     "uuid": "8eaad775-3119-417e-8cf4-2a10bfd592c8",
+     "styles": [
+      {
+       "id": 14,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/14.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "2.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/2.vvm",
+   "size": 59308683,
+   "sha256": "2eb9a67e3bce09a7f209eb21a56926fa94476352b6ce874c9acd8f465871a4f4",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "九州そら",
+     "uuid": "481fb609-6446-4870-9f46-90c4dd623403",
+     "styles": [
+      {
+       "id": 16,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/16.ogg"
+      },
+      {
+       "id": 15,
+       "name": "あまあま",
+       "type": "streaming_talk",
+       "sample": "samples/15.ogg"
+      },
+      {
+       "id": 18,
+       "name": "ツンツン",
+       "type": "streaming_talk",
+       "sample": "samples/18.ogg"
+      },
+      {
+       "id": 17,
+       "name": "セクシー",
+       "type": "streaming_talk",
+       "sample": "samples/17.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "3.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/3.vvm",
+   "size": 63346737,
+   "sha256": "54aeea4aa51c56e87acc1d406fafc2bd980414c36ebceae0830340b83791d3d7",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "波音リツ",
+     "uuid": "b1a81618-b27b-40d2-b0ea-27a9ad408c4b",
+     "styles": [
+      {
+       "id": 9,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/9.ogg"
+      },
+      {
+       "id": 65,
+       "name": "クイーン",
+       "type": "streaming_talk",
+       "sample": "samples/65.ogg"
+      }
+     ]
+    },
+    {
+     "name": "中国うさぎ",
+     "uuid": "1f18ffc3-47ea-4ce0-9829-0576d03a7ec8",
+     "styles": [
+      {
+       "id": 61,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/61.ogg"
+      },
+      {
+       "id": 62,
+       "name": "おどろき",
+       "type": "streaming_talk",
+       "sample": "samples/62.ogg"
+      },
+      {
+       "id": 63,
+       "name": "こわがり",
+       "type": "streaming_talk",
+       "sample": "samples/63.ogg"
+      },
+      {
+       "id": 64,
+       "name": "へろへろ",
+       "type": "streaming_talk",
+       "sample": "samples/64.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "4.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/4.vvm",
+   "size": 59304904,
+   "sha256": "716d2900f6b93ba22119af0e236c32fdbf6fea81c519b5d4830afcb2db349522",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "玄野武宏",
+     "uuid": "c30dc15a-0992-4f8d-8bb8-ad3b314e6a6f",
+     "styles": [
+      {
+       "id": 11,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/11.ogg"
+      }
+     ]
+    },
+    {
+     "name": "剣崎雌雄",
+     "uuid": "1a17ca16-7ee5-4ea5-b191-2f02ace24d21",
+     "styles": [
+      {
+       "id": 21,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/21.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "5.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/5.vvm",
+   "size": 57611312,
+   "sha256": "67451cdbc3e473dba4d09c878903a656be9e7030cb5901155e5a51634ed8b318",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "四国めたん",
+     "uuid": "7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff",
+     "styles": [
+      {
+       "id": 36,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/36.ogg"
+      },
+      {
+       "id": 37,
+       "name": "ヒソヒソ",
+       "type": "streaming_talk",
+       "sample": "samples/37.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ずんだもん",
+     "uuid": "388f246b-8c41-4ac1-8e2d-5d79f3ff56d9",
+     "styles": [
+      {
+       "id": 22,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/22.ogg"
+      },
+      {
+       "id": 38,
+       "name": "ヒソヒソ",
+       "type": "streaming_talk",
+       "sample": "samples/38.ogg"
+      }
+     ]
+    },
+    {
+     "name": "九州そら",
+     "uuid": "481fb609-6446-4870-9f46-90c4dd623403",
+     "styles": [
+      {
+       "id": 19,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/19.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "6.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/6.vvm",
+   "size": 59304854,
+   "sha256": "975d29f225cf605b0e75a0bb66f3f952821b16bbfa49a3a9b96a7688bf21abbe",
+   "bundled": true,
+   "singing": false,
+   "characters": [
+    {
+     "name": "No.7",
+     "uuid": "044830d2-f23b-44d6-ac0d-b5d733caa900",
+     "styles": [
+      {
+       "id": 29,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/29.ogg"
+      },
+      {
+       "id": 30,
+       "name": "アナウンス",
+       "type": "streaming_talk",
+       "sample": "samples/30.ogg"
+      },
+      {
+       "id": 31,
+       "name": "読み聞かせ",
+       "type": "streaming_talk",
+       "sample": "samples/31.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "7.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/7.vvm",
+   "size": 58326212,
+   "sha256": "d8e3bc97610805901fb7647226a233fe15056f30d1f91d270895c60198625569",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "後鬼",
+     "uuid": "0f56c2f2-644c-49c9-8989-94e11f7129d0",
+     "styles": [
+      {
+       "id": 27,
+       "name": "人間ver.",
+       "type": "streaming_talk",
+       "sample": "samples/27.ogg"
+      },
+      {
+       "id": 28,
+       "name": "ぬいぐるみver.",
+       "type": "streaming_talk",
+       "sample": "samples/28.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "8.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/8.vvm",
+   "size": 59304782,
+   "sha256": "0625c497f1f22be87d03281676c0292d834e262338e70ccaf83af7f34aa83b99",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "WhiteCUL",
+     "uuid": "67d5d8da-acd7-4207-bb10-b5542d3a663b",
+     "styles": [
+      {
+       "id": 23,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/23.ogg"
+      },
+      {
+       "id": 24,
+       "name": "たのしい",
+       "type": "streaming_talk",
+       "sample": "samples/24.ogg"
+      },
+      {
+       "id": 25,
+       "name": "かなしい",
+       "type": "streaming_talk",
+       "sample": "samples/25.ogg"
+      },
+      {
+       "id": 26,
+       "name": "びえーん",
+       "type": "streaming_talk",
+       "sample": "samples/26.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "9.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/9.vvm",
+   "size": 58328935,
+   "sha256": "3dca586c0aa553772419bdc090045f9ea73bd9ed82b88b7dd5737bdd6eddee29",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "白上虎太郎",
+     "uuid": "e5020595-5c5d-4e87-b849-270a518d0dcf",
+     "styles": [
+      {
+       "id": 12,
+       "name": "ふつう",
+       "type": "streaming_talk",
+       "sample": "samples/12.ogg"
+      },
+      {
+       "id": 32,
+       "name": "わーい",
+       "type": "streaming_talk",
+       "sample": "samples/32.ogg"
+      },
+      {
+       "id": 33,
+       "name": "びくびく",
+       "type": "streaming_talk",
+       "sample": "samples/33.ogg"
+      },
+      {
+       "id": 34,
+       "name": "おこ",
+       "type": "streaming_talk",
+       "sample": "samples/34.ogg"
+      },
+      {
+       "id": 35,
+       "name": "びえーん",
+       "type": "streaming_talk",
+       "sample": "samples/35.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "10.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/10.vvm",
+   "size": 58327087,
+   "sha256": "dea2104b05391fdc37d8c27b4104569d5bff3a52bcb9e4077bb2b1f951c7524a",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "玄野武宏",
+     "uuid": "c30dc15a-0992-4f8d-8bb8-ad3b314e6a6f",
+     "styles": [
+      {
+       "id": 39,
+       "name": "喜び",
+       "type": "streaming_talk",
+       "sample": "samples/39.ogg"
+      },
+      {
+       "id": 40,
+       "name": "ツンギレ",
+       "type": "streaming_talk",
+       "sample": "samples/40.ogg"
+      },
+      {
+       "id": 41,
+       "name": "悲しみ",
+       "type": "streaming_talk",
+       "sample": "samples/41.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ちび式じい",
+     "uuid": "468b8e94-9da4-4f7a-8715-a22a48844f9e",
+     "styles": [
+      {
+       "id": 42,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/42.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "11.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/11.vvm",
+   "size": 61687324,
+   "sha256": "3fb0c0f12ec37fda568020509d6e63a0a6b5d6edf3c2330508c6bf4e3eeb8b82",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "櫻歌ミコ",
+     "uuid": "0693554c-338e-4790-8982-b9c6d476dc69",
+     "styles": [
+      {
+       "id": 43,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/43.ogg"
+      },
+      {
+       "id": 44,
+       "name": "第二形態",
+       "type": "streaming_talk",
+       "sample": "samples/44.ogg"
+      },
+      {
+       "id": 45,
+       "name": "ロリ",
+       "type": "streaming_talk",
+       "sample": "samples/45.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ナースロボ＿タイプＴ",
+     "uuid": "882a636f-3bac-431a-966d-c5e6bba9f949",
+     "styles": [
+      {
+       "id": 47,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/47.ogg"
+      },
+      {
+       "id": 48,
+       "name": "楽々",
+       "type": "streaming_talk",
+       "sample": "samples/48.ogg"
+      },
+      {
+       "id": 49,
+       "name": "恐怖",
+       "type": "streaming_talk",
+       "sample": "samples/49.ogg"
+      },
+      {
+       "id": 50,
+       "name": "内緒話",
+       "type": "streaming_talk",
+       "sample": "samples/50.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "12.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/12.vvm",
+   "size": 59305189,
+   "sha256": "894464a6cbf59bdf930b8406097f44d2f25bb762db5bc71c9e9c31e1f904c715",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "†聖騎士 紅桜†",
+     "uuid": "471e39d2-fb11-4c8c-8d89-4b322d2498e0",
+     "styles": [
+      {
+       "id": 51,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/51.ogg"
+      }
+     ]
+    },
+    {
+     "name": "雀松朱司",
+     "uuid": "0acebdee-a4a5-4e12-a695-e19609728e30",
+     "styles": [
+      {
+       "id": 52,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/52.ogg"
+      }
+     ]
+    },
+    {
+     "name": "麒ヶ島宗麟",
+     "uuid": "7d1e7ba7-f957-40e5-a3fc-da49f769ab65",
+     "styles": [
+      {
+       "id": 53,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/53.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "13.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/13.vvm",
+   "size": 61686018,
+   "sha256": "df381d94df92992c4170017d2f1ca386f7a5c3cb559e1bd0578f899910529e29",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "春歌ナナ",
+     "uuid": "ba5d2428-f7e0-4c20-ac41-9dd56e9178b4",
+     "styles": [
+      {
+       "id": 54,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/54.ogg"
+      }
+     ]
+    },
+    {
+     "name": "猫使アル",
+     "uuid": "00a5c10c-d3bd-459f-83fd-43180b521a44",
+     "styles": [
+      {
+       "id": 55,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/55.ogg"
+      },
+      {
+       "id": 56,
+       "name": "おちつき",
+       "type": "streaming_talk",
+       "sample": "samples/56.ogg"
+      },
+      {
+       "id": 57,
+       "name": "うきうき",
+       "type": "streaming_talk",
+       "sample": "samples/57.ogg"
+      }
+     ]
+    },
+    {
+     "name": "猫使ビィ",
+     "uuid": "c20a2254-0349-4470-9fc8-e5c0f8cf3404",
+     "styles": [
+      {
+       "id": 58,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/58.ogg"
+      },
+      {
+       "id": 59,
+       "name": "おちつき",
+       "type": "streaming_talk",
+       "sample": "samples/59.ogg"
+      },
+      {
+       "id": 60,
+       "name": "人見知り",
+       "type": "streaming_talk",
+       "sample": "samples/60.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "14.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/14.vvm",
+   "size": 66281498,
+   "sha256": "63cbabeb29ee9a4837a2462c77fc5cecd380abb5bdbcda4c40b3c34f8f2f9d38",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "栗田まろん",
+     "uuid": "04dbd989-32d0-40b4-9e71-17c920f2a8a9",
+     "styles": [
+      {
+       "id": 67,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/67.ogg"
+      }
+     ]
+    },
+    {
+     "name": "あいえるたん",
+     "uuid": "dda44ade-5f9c-4a3a-9d2c-2a976c7476d9",
+     "styles": [
+      {
+       "id": 68,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/68.ogg"
+      }
+     ]
+    },
+    {
+     "name": "満別花丸",
+     "uuid": "287aa49f-e56b-4530-a469-855776c84a8d",
+     "styles": [
+      {
+       "id": 69,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/69.ogg"
+      },
+      {
+       "id": 70,
+       "name": "元気",
+       "type": "streaming_talk",
+       "sample": "samples/70.ogg"
+      },
+      {
+       "id": 71,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/71.ogg"
+      },
+      {
+       "id": 72,
+       "name": "ぶりっ子",
+       "type": "streaming_talk",
+       "sample": "samples/72.ogg"
+      },
+      {
+       "id": 73,
+       "name": "ボーイ",
+       "type": "streaming_talk",
+       "sample": "samples/73.ogg"
+      }
+     ]
+    },
+    {
+     "name": "琴詠ニア",
+     "uuid": "97a4af4b-086e-4efd-b125-7ae2da85e697",
+     "styles": [
+      {
+       "id": 74,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/74.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "15.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/15.vvm",
+   "size": 67265793,
+   "sha256": "c29b0c0f8e332fcedc2a5de4b4426feb75fc9f587c314da99af8dbc964287221",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "ずんだもん",
+     "uuid": "388f246b-8c41-4ac1-8e2d-5d79f3ff56d9",
+     "styles": [
+      {
+       "id": 75,
+       "name": "ヘロヘロ",
+       "type": "streaming_talk",
+       "sample": "samples/75.ogg"
+      },
+      {
+       "id": 76,
+       "name": "なみだめ",
+       "type": "streaming_talk",
+       "sample": "samples/76.ogg"
+      }
+     ]
+    },
+    {
+     "name": "青山龍星",
+     "uuid": "4f51116a-d9ee-4516-925d-21f183e2afad",
+     "styles": [
+      {
+       "id": 13,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/13.ogg"
+      },
+      {
+       "id": 81,
+       "name": "熱血",
+       "type": "streaming_talk",
+       "sample": "samples/81.ogg"
+      },
+      {
+       "id": 82,
+       "name": "不機嫌",
+       "type": "streaming_talk",
+       "sample": "samples/82.ogg"
+      },
+      {
+       "id": 83,
+       "name": "喜び",
+       "type": "streaming_talk",
+       "sample": "samples/83.ogg"
+      },
+      {
+       "id": 84,
+       "name": "しっとり",
+       "type": "streaming_talk",
+       "sample": "samples/84.ogg"
+      },
+      {
+       "id": 85,
+       "name": "かなしみ",
+       "type": "streaming_talk",
+       "sample": "samples/85.ogg"
+      },
+      {
+       "id": 86,
+       "name": "囁き",
+       "type": "streaming_talk",
+       "sample": "samples/86.ogg"
+      }
+     ]
+    },
+    {
+     "name": "もち子さん",
+     "uuid": "9f3ee141-26ad-437e-97bd-d22298d02ad2",
+     "styles": [
+      {
+       "id": 20,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/20.ogg"
+      },
+      {
+       "id": 66,
+       "name": "セクシー／あん子",
+       "type": "streaming_talk",
+       "sample": "samples/66.ogg"
+      },
+      {
+       "id": 77,
+       "name": "泣き",
+       "type": "streaming_talk",
+       "sample": "samples/77.ogg"
+      },
+      {
+       "id": 78,
+       "name": "怒り",
+       "type": "streaming_talk",
+       "sample": "samples/78.ogg"
+      },
+      {
+       "id": 79,
+       "name": "喜び",
+       "type": "streaming_talk",
+       "sample": "samples/79.ogg"
+      },
+      {
+       "id": 80,
+       "name": "のんびり",
+       "type": "streaming_talk",
+       "sample": "samples/80.ogg"
+      }
+     ]
+    },
+    {
+     "name": "小夜/SAYO",
+     "uuid": "a8cc6d22-aad0-4ab8-bf1e-2f843924164a",
+     "styles": [
+      {
+       "id": 46,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/46.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "16.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/16.vvm",
+   "size": 59303880,
+   "sha256": "545a2365dbb3f457d2ee9e24b45313968aa4c8351d513f3a79d9922a17569cab",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "後鬼",
+     "uuid": "0f56c2f2-644c-49c9-8989-94e11f7129d0",
+     "styles": [
+      {
+       "id": 87,
+       "name": "人間（怒り）ver.",
+       "type": "streaming_talk",
+       "sample": "samples/87.ogg"
+      },
+      {
+       "id": 88,
+       "name": "鬼ver.",
+       "type": "streaming_talk",
+       "sample": "samples/88.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "17.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/17.vvm",
+   "size": 59304258,
+   "sha256": "eb96b6c71fa80f905a86ec7f221f10fbf31f84c0675f919a25d198d8561e3f9a",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "Voidoll",
+     "uuid": "0ebe2c7d-96f3-4f0e-a2e3-ae13fe27c403",
+     "styles": [
+      {
+       "id": 89,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/89.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "18.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/18.vvm",
+   "size": 62519486,
+   "sha256": "33e5177ebbe1ec5829769c1017f1294641dbf22c43cd2af4896ae0738a14ed13",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "ぞん子",
+     "uuid": "0156da66-4300-474a-a398-49eb2e8dd853",
+     "styles": [
+      {
+       "id": 90,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/90.ogg"
+      },
+      {
+       "id": 91,
+       "name": "低血圧",
+       "type": "streaming_talk",
+       "sample": "samples/91.ogg"
+      },
+      {
+       "id": 92,
+       "name": "覚醒",
+       "type": "streaming_talk",
+       "sample": "samples/92.ogg"
+      },
+      {
+       "id": 93,
+       "name": "実況風",
+       "type": "streaming_talk",
+       "sample": "samples/93.ogg"
+      }
+     ]
+    },
+    {
+     "name": "中部つるぎ",
+     "uuid": "4614a7de-9829-465d-9791-97eb8a5f9b86",
+     "styles": [
+      {
+       "id": 94,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/94.ogg"
+      },
+      {
+       "id": 95,
+       "name": "怒り",
+       "type": "streaming_talk",
+       "sample": "samples/95.ogg"
+      },
+      {
+       "id": 96,
+       "name": "ヒソヒソ",
+       "type": "streaming_talk",
+       "sample": "samples/96.ogg"
+      },
+      {
+       "id": 97,
+       "name": "おどおど",
+       "type": "streaming_talk",
+       "sample": "samples/97.ogg"
+      },
+      {
+       "id": 98,
+       "name": "絶望と敗北",
+       "type": "streaming_talk",
+       "sample": "samples/98.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "19.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/19.vvm",
+   "size": 60021787,
+   "sha256": "b9e1c5ddd5b418a6f1d6377d7d00df32c682b580ac9d326675ba4e0b7bb4fc3d",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "離途",
+     "uuid": "3b91e034-e028-4acb-a08d-fbdcd207ea63",
+     "styles": [
+      {
+       "id": 99,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/99.ogg"
+      },
+      {
+       "id": 101,
+       "name": "シリアス",
+       "type": "streaming_talk",
+       "sample": "samples/101.ogg"
+      }
+     ]
+    },
+    {
+     "name": "黒沢冴白",
+     "uuid": "0b466290-f9b6-4718-8d37-6c0c81e824ac",
+     "styles": [
+      {
+       "id": 100,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/100.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "20.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/20.vvm",
+   "size": 60535324,
+   "sha256": "fcfa6438d71df86c2013a8f285224fb96b632c4f07486d9855474f3df9a50a09",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "ユーレイちゃん",
+     "uuid": "462cd6b4-c088-42b0-b357-3816e24f112e",
+     "styles": [
+      {
+       "id": 102,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/102.ogg"
+      },
+      {
+       "id": 103,
+       "name": "甘々",
+       "type": "streaming_talk",
+       "sample": "samples/103.ogg"
+      },
+      {
+       "id": 104,
+       "name": "哀しみ",
+       "type": "streaming_talk",
+       "sample": "samples/104.ogg"
+      },
+      {
+       "id": 105,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/105.ogg"
+      },
+      {
+       "id": 106,
+       "name": "ツクモちゃん",
+       "type": "streaming_talk",
+       "sample": "samples/106.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "21.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/21.vvm",
+   "size": 63195138,
+   "sha256": "f6b937e953409a65f3d7609335a4dfd19fdd9458be27d988bdd8296034adfaf6",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "猫使アル",
+     "uuid": "00a5c10c-d3bd-459f-83fd-43180b521a44",
+     "styles": [
+      {
+       "id": 110,
+       "name": "つよつよ",
+       "type": "streaming_talk",
+       "sample": "samples/110.ogg"
+      },
+      {
+       "id": 111,
+       "name": "へろへろ",
+       "type": "streaming_talk",
+       "sample": "samples/111.ogg"
+      }
+     ]
+    },
+    {
+     "name": "猫使ビィ",
+     "uuid": "c20a2254-0349-4470-9fc8-e5c0f8cf3404",
+     "styles": [
+      {
+       "id": 112,
+       "name": "つよつよ",
+       "type": "streaming_talk",
+       "sample": "samples/112.ogg"
+      }
+     ]
+    },
+    {
+     "name": "東北ずん子",
+     "uuid": "80802b2d-8c75-4429-978b-515105017010",
+     "styles": [
+      {
+       "id": 107,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/107.ogg"
+      }
+     ]
+    },
+    {
+     "name": "東北きりたん",
+     "uuid": "1bd6b32b-d650-4072-bbe5-1d0ef4aaa28b",
+     "styles": [
+      {
+       "id": 108,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/108.ogg"
+      }
+     ]
+    },
+    {
+     "name": "東北イタコ",
+     "uuid": "ab4c31a3-8769-422a-b412-708f5ae637e8",
+     "styles": [
+      {
+       "id": 109,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/109.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "22.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/22.vvm",
+   "size": 63409684,
+   "sha256": "1c580f93caaa89f517d2431ee82519eab39c389d1bfb8791035f5c5af71eb17d",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "あんこもん",
+     "uuid": "3be49e15-34bb-48a0-9e2f-9b80c96e9905",
+     "styles": [
+      {
+       "id": 113,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/113.ogg"
+      },
+      {
+       "id": 114,
+       "name": "つよつよ",
+       "type": "streaming_talk",
+       "sample": "samples/114.ogg"
+      },
+      {
+       "id": 115,
+       "name": "よわよわ",
+       "type": "streaming_talk",
+       "sample": "samples/115.ogg"
+      },
+      {
+       "id": 116,
+       "name": "けだるげ",
+       "type": "streaming_talk",
+       "sample": "samples/116.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "23.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/23.vvm",
+   "size": 60022581,
+   "sha256": "4e09d14a73e5c3e6ec237cf37aae1ce44464e0d4b8a36e7580cb7b475f494dda",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "あんこもん",
+     "uuid": "3be49e15-34bb-48a0-9e2f-9b80c96e9905",
+     "styles": [
+      {
+       "id": 117,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/117.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "24.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/24.vvm",
+   "size": 60024319,
+   "sha256": "3e62f5ce0ac345ed74c0e3bc9051cd99baaed37389e33f64195c9e0e49f34594",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "夜語トバリ",
+     "uuid": "d3be2066-205b-47f6-8818-1d93a9ca9cef",
+     "styles": [
+      {
+       "id": 118,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/118.ogg"
+      },
+      {
+       "id": 119,
+       "name": "明るい",
+       "type": "streaming_talk",
+       "sample": "samples/119.ogg"
+      },
+      {
+       "id": 120,
+       "name": "哀しみ",
+       "type": "streaming_talk",
+       "sample": "samples/120.ogg"
+      },
+      {
+       "id": 121,
+       "name": "呆れ",
+       "type": "streaming_talk",
+       "sample": "samples/121.ogg"
+      }
+     ]
+    },
+    {
+     "name": "暁記ミタマ",
+     "uuid": "aca7de06-9ff9-49a3-9f08-9d3bc19689e5",
+     "styles": [
+      {
+       "id": 122,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/122.ogg"
+      },
+      {
+       "id": 123,
+       "name": "怒り",
+       "type": "streaming_talk",
+       "sample": "samples/123.ogg"
+      },
+      {
+       "id": 124,
+       "name": "哀しみ",
+       "type": "streaming_talk",
+       "sample": "samples/124.ogg"
+      },
+      {
+       "id": 125,
+       "name": "ささやき",
+       "type": "streaming_talk",
+       "sample": "samples/125.ogg"
+      }
+     ]
+    },
+    {
+     "name": "里石ユカ",
+     "uuid": "cc7baa71-6c74-4399-803b-b60576176a08",
+     "styles": [
+      {
+       "id": 126,
+       "name": "つぼみ",
+       "type": "streaming_talk",
+       "sample": "samples/126.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "n0.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/n0.vvm",
+   "size": 75175864,
+   "sha256": "f9793559a0ecad1622c15e68674860d7d00ce2736cf02b3f46b083e989c74ec7",
+   "bundled": false,
+   "singing": false,
+   "characters": [
+    {
+     "name": "女声1",
+     "uuid": "abccafa5-174f-44d8-b70c-c41eebb3061c",
+     "styles": [
+      {
+       "id": 10005,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10005.ogg"
+      }
+     ]
+    },
+    {
+     "name": "女声2",
+     "uuid": "a601bf4a-d986-468d-a394-345f4e1e7ae1",
+     "styles": [
+      {
+       "id": 10007,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10007.ogg"
+      }
+     ]
+    },
+    {
+     "name": "女声3",
+     "uuid": "be15f40d-a95a-4fb3-b298-a59fdd727af1",
+     "styles": [
+      {
+       "id": 10004,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10004.ogg"
+      }
+     ]
+    },
+    {
+     "name": "女声4",
+     "uuid": "3f98f123-fa9a-4ad0-96ba-2a1bae922433",
+     "styles": [
+      {
+       "id": 10003,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10003.ogg"
+      }
+     ]
+    },
+    {
+     "name": "女声5",
+     "uuid": "69f71ba4-1c36-406d-a693-8091d60fa952",
+     "styles": [
+      {
+       "id": 10008,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10008.ogg"
+      }
+     ]
+    },
+    {
+     "name": "女声6",
+     "uuid": "3490c392-30be-44c2-8379-b77df27fa65e",
+     "styles": [
+      {
+       "id": 10006,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10006.ogg"
+      }
+     ]
+    },
+    {
+     "name": "男声1",
+     "uuid": "2171909e-d2d1-4bbb-aa45-442c12732665",
+     "styles": [
+      {
+       "id": 10001,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10001.ogg"
+      }
+     ]
+    },
+    {
+     "name": "男声2",
+     "uuid": "7ecc7a17-1465-4b22-a3b5-842a110ff55e",
+     "styles": [
+      {
+       "id": 10000,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10000.ogg"
+      }
+     ]
+    },
+    {
+     "name": "男声3",
+     "uuid": "627b3e92-32c5-4c2f-860a-a5553d3d6662",
+     "styles": [
+      {
+       "id": 10002,
+       "name": "ノーマル",
+       "type": "streaming_talk",
+       "sample": "samples/10002.ogg"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s0.vvm",
+   "url": "https://github.com/VOICEVOX/voicevox_vvm/releases/download/0.17.0/s0.vvm",
+   "size": 130412376,
+   "sha256": "e97971e3d9c0feaf7a373a5b13b905a885731ce61eef489857055a6631030038",
+   "bundled": false,
+   "singing": true,
+   "characters": [
+    {
+     "name": "四国めたん",
+     "uuid": "7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff",
+     "styles": [
+      {
+       "id": 3002,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3002.ogg"
+      },
+      {
+       "id": 3000,
+       "name": "あまあま",
+       "type": "frame_decode",
+       "sample": "samples/3000.ogg"
+      },
+      {
+       "id": 3006,
+       "name": "ツンツン",
+       "type": "frame_decode",
+       "sample": "samples/3006.ogg"
+      },
+      {
+       "id": 3004,
+       "name": "セクシー",
+       "type": "frame_decode",
+       "sample": "samples/3004.ogg"
+      },
+      {
+       "id": 3037,
+       "name": "ヒソヒソ",
+       "type": "frame_decode",
+       "sample": "samples/3037.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ずんだもん",
+     "uuid": "388f246b-8c41-4ac1-8e2d-5d79f3ff56d9",
+     "styles": [
+      {
+       "id": 3003,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3003.ogg"
+      },
+      {
+       "id": 3001,
+       "name": "あまあま",
+       "type": "frame_decode",
+       "sample": "samples/3001.ogg"
+      },
+      {
+       "id": 3007,
+       "name": "ツンツン",
+       "type": "frame_decode",
+       "sample": "samples/3007.ogg"
+      },
+      {
+       "id": 3005,
+       "name": "セクシー",
+       "type": "frame_decode",
+       "sample": "samples/3005.ogg"
+      },
+      {
+       "id": 3038,
+       "name": "ヒソヒソ",
+       "type": "frame_decode",
+       "sample": "samples/3038.ogg"
+      },
+      {
+       "id": 3075,
+       "name": "ヘロヘロ",
+       "type": "frame_decode",
+       "sample": "samples/3075.ogg"
+      },
+      {
+       "id": 3076,
+       "name": "なみだめ",
+       "type": "frame_decode",
+       "sample": "samples/3076.ogg"
+      }
+     ]
+    },
+    {
+     "name": "春日部つむぎ",
+     "uuid": "35b2c544-660e-401e-b503-0e14c635303a",
+     "styles": [
+      {
+       "id": 3008,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3008.ogg"
+      }
+     ]
+    },
+    {
+     "name": "雨晴はう",
+     "uuid": "3474ee95-c274-47f9-aa1a-8322163d96f1",
+     "styles": [
+      {
+       "id": 3010,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3010.ogg"
+      }
+     ]
+    },
+    {
+     "name": "波音リツ",
+     "uuid": "b1a81618-b27b-40d2-b0ea-27a9ad408c4b",
+     "styles": [
+      {
+       "id": 3009,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3009.ogg"
+      },
+      {
+       "id": 3065,
+       "name": "クイーン",
+       "type": "frame_decode",
+       "sample": "samples/3065.ogg"
+      },
+      {
+       "id": 6000,
+       "name": "ノーマル",
+       "type": "sing",
+       "sample": null
+      }
+     ]
+    },
+    {
+     "name": "玄野武宏",
+     "uuid": "c30dc15a-0992-4f8d-8bb8-ad3b314e6a6f",
+     "styles": [
+      {
+       "id": 3011,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3011.ogg"
+      },
+      {
+       "id": 3039,
+       "name": "喜び",
+       "type": "frame_decode",
+       "sample": "samples/3039.ogg"
+      },
+      {
+       "id": 3040,
+       "name": "ツンギレ",
+       "type": "frame_decode",
+       "sample": "samples/3040.ogg"
+      },
+      {
+       "id": 3041,
+       "name": "悲しみ",
+       "type": "frame_decode",
+       "sample": "samples/3041.ogg"
+      }
+     ]
+    },
+    {
+     "name": "白上虎太郎",
+     "uuid": "e5020595-5c5d-4e87-b849-270a518d0dcf",
+     "styles": [
+      {
+       "id": 3012,
+       "name": "ふつう",
+       "type": "frame_decode",
+       "sample": "samples/3012.ogg"
+      },
+      {
+       "id": 3032,
+       "name": "わーい",
+       "type": "frame_decode",
+       "sample": "samples/3032.ogg"
+      },
+      {
+       "id": 3033,
+       "name": "びくびく",
+       "type": "frame_decode",
+       "sample": "samples/3033.ogg"
+      },
+      {
+       "id": 3034,
+       "name": "おこ",
+       "type": "frame_decode",
+       "sample": "samples/3034.ogg"
+      },
+      {
+       "id": 3035,
+       "name": "びえーん",
+       "type": "frame_decode",
+       "sample": "samples/3035.ogg"
+      }
+     ]
+    },
+    {
+     "name": "青山龍星",
+     "uuid": "4f51116a-d9ee-4516-925d-21f183e2afad",
+     "styles": [
+      {
+       "id": 3013,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3013.ogg"
+      },
+      {
+       "id": 3081,
+       "name": "熱血",
+       "type": "frame_decode",
+       "sample": "samples/3081.ogg"
+      },
+      {
+       "id": 3082,
+       "name": "不機嫌",
+       "type": "frame_decode",
+       "sample": "samples/3082.ogg"
+      },
+      {
+       "id": 3083,
+       "name": "喜び",
+       "type": "frame_decode",
+       "sample": "samples/3083.ogg"
+      },
+      {
+       "id": 3084,
+       "name": "しっとり",
+       "type": "frame_decode",
+       "sample": "samples/3084.ogg"
+      },
+      {
+       "id": 3085,
+       "name": "かなしみ",
+       "type": "frame_decode",
+       "sample": "samples/3085.ogg"
+      }
+     ]
+    },
+    {
+     "name": "冥鳴ひまり",
+     "uuid": "8eaad775-3119-417e-8cf4-2a10bfd592c8",
+     "styles": [
+      {
+       "id": 3014,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3014.ogg"
+      }
+     ]
+    },
+    {
+     "name": "九州そら",
+     "uuid": "481fb609-6446-4870-9f46-90c4dd623403",
+     "styles": [
+      {
+       "id": 3016,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3016.ogg"
+      },
+      {
+       "id": 3015,
+       "name": "あまあま",
+       "type": "frame_decode",
+       "sample": "samples/3015.ogg"
+      },
+      {
+       "id": 3018,
+       "name": "ツンツン",
+       "type": "frame_decode",
+       "sample": "samples/3018.ogg"
+      },
+      {
+       "id": 3017,
+       "name": "セクシー",
+       "type": "frame_decode",
+       "sample": "samples/3017.ogg"
+      }
+     ]
+    },
+    {
+     "name": "もち子さん",
+     "uuid": "9f3ee141-26ad-437e-97bd-d22298d02ad2",
+     "styles": [
+      {
+       "id": 3020,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3020.ogg"
+      },
+      {
+       "id": 3066,
+       "name": "セクシー／あん子",
+       "type": "frame_decode",
+       "sample": "samples/3066.ogg"
+      },
+      {
+       "id": 3077,
+       "name": "泣き",
+       "type": "frame_decode",
+       "sample": "samples/3077.ogg"
+      },
+      {
+       "id": 3078,
+       "name": "怒り",
+       "type": "frame_decode",
+       "sample": "samples/3078.ogg"
+      },
+      {
+       "id": 3079,
+       "name": "喜び",
+       "type": "frame_decode",
+       "sample": "samples/3079.ogg"
+      },
+      {
+       "id": 3080,
+       "name": "のんびり",
+       "type": "frame_decode",
+       "sample": "samples/3080.ogg"
+      }
+     ]
+    },
+    {
+     "name": "剣崎雌雄",
+     "uuid": "1a17ca16-7ee5-4ea5-b191-2f02ace24d21",
+     "styles": [
+      {
+       "id": 3021,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3021.ogg"
+      }
+     ]
+    },
+    {
+     "name": "WhiteCUL",
+     "uuid": "67d5d8da-acd7-4207-bb10-b5542d3a663b",
+     "styles": [
+      {
+       "id": 3023,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3023.ogg"
+      },
+      {
+       "id": 3024,
+       "name": "たのしい",
+       "type": "frame_decode",
+       "sample": "samples/3024.ogg"
+      },
+      {
+       "id": 3025,
+       "name": "かなしい",
+       "type": "frame_decode",
+       "sample": "samples/3025.ogg"
+      },
+      {
+       "id": 3026,
+       "name": "びえーん",
+       "type": "frame_decode",
+       "sample": "samples/3026.ogg"
+      }
+     ]
+    },
+    {
+     "name": "後鬼",
+     "uuid": "0f56c2f2-644c-49c9-8989-94e11f7129d0",
+     "styles": [
+      {
+       "id": 3027,
+       "name": "人間ver.",
+       "type": "frame_decode",
+       "sample": "samples/3027.ogg"
+      },
+      {
+       "id": 3028,
+       "name": "ぬいぐるみver.",
+       "type": "frame_decode",
+       "sample": "samples/3028.ogg"
+      }
+     ]
+    },
+    {
+     "name": "No.7",
+     "uuid": "044830d2-f23b-44d6-ac0d-b5d733caa900",
+     "styles": [
+      {
+       "id": 3029,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3029.ogg"
+      },
+      {
+       "id": 3030,
+       "name": "アナウンス",
+       "type": "frame_decode",
+       "sample": "samples/3030.ogg"
+      },
+      {
+       "id": 3031,
+       "name": "読み聞かせ",
+       "type": "frame_decode",
+       "sample": "samples/3031.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ちび式じい",
+     "uuid": "468b8e94-9da4-4f7a-8715-a22a48844f9e",
+     "styles": [
+      {
+       "id": 3042,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3042.ogg"
+      }
+     ]
+    },
+    {
+     "name": "櫻歌ミコ",
+     "uuid": "0693554c-338e-4790-8982-b9c6d476dc69",
+     "styles": [
+      {
+       "id": 3043,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3043.ogg"
+      },
+      {
+       "id": 3044,
+       "name": "第二形態",
+       "type": "frame_decode",
+       "sample": "samples/3044.ogg"
+      },
+      {
+       "id": 3045,
+       "name": "ロリ",
+       "type": "frame_decode",
+       "sample": "samples/3045.ogg"
+      }
+     ]
+    },
+    {
+     "name": "小夜/SAYO",
+     "uuid": "a8cc6d22-aad0-4ab8-bf1e-2f843924164a",
+     "styles": [
+      {
+       "id": 3046,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3046.ogg"
+      }
+     ]
+    },
+    {
+     "name": "ナースロボ＿タイプＴ",
+     "uuid": "882a636f-3bac-431a-966d-c5e6bba9f949",
+     "styles": [
+      {
+       "id": 3047,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3047.ogg"
+      },
+      {
+       "id": 3048,
+       "name": "楽々",
+       "type": "frame_decode",
+       "sample": "samples/3048.ogg"
+      },
+      {
+       "id": 3049,
+       "name": "恐怖",
+       "type": "frame_decode",
+       "sample": "samples/3049.ogg"
+      }
+     ]
+    },
+    {
+     "name": "†聖騎士 紅桜†",
+     "uuid": "471e39d2-fb11-4c8c-8d89-4b322d2498e0",
+     "styles": [
+      {
+       "id": 3051,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3051.ogg"
+      }
+     ]
+    },
+    {
+     "name": "雀松朱司",
+     "uuid": "0acebdee-a4a5-4e12-a695-e19609728e30",
+     "styles": [
+      {
+       "id": 3052,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3052.ogg"
+      }
+     ]
+    },
+    {
+     "name": "麒ヶ島宗麟",
+     "uuid": "7d1e7ba7-f957-40e5-a3fc-da49f769ab65",
+     "styles": [
+      {
+       "id": 3053,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3053.ogg"
+      }
+     ]
+    },
+    {
+     "name": "春歌ナナ",
+     "uuid": "ba5d2428-f7e0-4c20-ac41-9dd56e9178b4",
+     "styles": [
+      {
+       "id": 3054,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3054.ogg"
+      }
+     ]
+    },
+    {
+     "name": "猫使アル",
+     "uuid": "00a5c10c-d3bd-459f-83fd-43180b521a44",
+     "styles": [
+      {
+       "id": 3055,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3055.ogg"
+      },
+      {
+       "id": 3056,
+       "name": "おちつき",
+       "type": "frame_decode",
+       "sample": "samples/3056.ogg"
+      },
+      {
+       "id": 3057,
+       "name": "うきうき",
+       "type": "frame_decode",
+       "sample": "samples/3057.ogg"
+      }
+     ]
+    },
+    {
+     "name": "猫使ビィ",
+     "uuid": "c20a2254-0349-4470-9fc8-e5c0f8cf3404",
+     "styles": [
+      {
+       "id": 3058,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3058.ogg"
+      },
+      {
+       "id": 3059,
+       "name": "おちつき",
+       "type": "frame_decode",
+       "sample": "samples/3059.ogg"
+      }
+     ]
+    },
+    {
+     "name": "中国うさぎ",
+     "uuid": "1f18ffc3-47ea-4ce0-9829-0576d03a7ec8",
+     "styles": [
+      {
+       "id": 3061,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3061.ogg"
+      },
+      {
+       "id": 3062,
+       "name": "おどろき",
+       "type": "frame_decode",
+       "sample": "samples/3062.ogg"
+      },
+      {
+       "id": 3063,
+       "name": "こわがり",
+       "type": "frame_decode",
+       "sample": "samples/3063.ogg"
+      },
+      {
+       "id": 3064,
+       "name": "へろへろ",
+       "type": "frame_decode",
+       "sample": "samples/3064.ogg"
+      }
+     ]
+    },
+    {
+     "name": "栗田まろん",
+     "uuid": "04dbd989-32d0-40b4-9e71-17c920f2a8a9",
+     "styles": [
+      {
+       "id": 3067,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3067.ogg"
+      }
+     ]
+    },
+    {
+     "name": "あいえるたん",
+     "uuid": "dda44ade-5f9c-4a3a-9d2c-2a976c7476d9",
+     "styles": [
+      {
+       "id": 3068,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3068.ogg"
+      }
+     ]
+    },
+    {
+     "name": "満別花丸",
+     "uuid": "287aa49f-e56b-4530-a469-855776c84a8d",
+     "styles": [
+      {
+       "id": 3069,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3069.ogg"
+      },
+      {
+       "id": 3070,
+       "name": "元気",
+       "type": "frame_decode",
+       "sample": "samples/3070.ogg"
+      },
+      {
+       "id": 3071,
+       "name": "ささやき",
+       "type": "frame_decode",
+       "sample": "samples/3071.ogg"
+      },
+      {
+       "id": 3072,
+       "name": "ぶりっ子",
+       "type": "frame_decode",
+       "sample": "samples/3072.ogg"
+      },
+      {
+       "id": 3073,
+       "name": "ボーイ",
+       "type": "frame_decode",
+       "sample": "samples/3073.ogg"
+      }
+     ]
+    },
+    {
+     "name": "琴詠ニア",
+     "uuid": "97a4af4b-086e-4efd-b125-7ae2da85e697",
+     "styles": [
+      {
+       "id": 3074,
+       "name": "ノーマル",
+       "type": "frame_decode",
+       "sample": "samples/3074.ogg"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

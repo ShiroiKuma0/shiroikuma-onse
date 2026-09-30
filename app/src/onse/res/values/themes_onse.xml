@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 白い熊 音声 — black window from the first frame (upstream's theme is Material Light). -->
+<resources>
+    <style name="Theme.Voicevox_tts" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FF000000</item>
+        <item name="android:colorBackground">#FF000000</item>
+        <item name="android:colorAccent">#FFFFFF00</item>
+        <item name="android:textColorPrimary">#FFFFFF00</item>
+    </style>
+</resources>

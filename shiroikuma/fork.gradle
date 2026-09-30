@@ -116,3 +116,44 @@ tasks.register("buildFork") {
         println "\u001B[1;36m>>> BUILD_NUMBER bumped to ${nextBuildNumber}\u001B[0m"
     }
 }
+
+// --- The bundled voice model -------------------------------------------------------------------
+// The APK ships ONE model: No.7 (6.vvm, style 31 読み聞かせ — the 白い熊 voice) as
+// app/src/onse/res/raw/model.vvm, which overrides upstream's main-source model by name. Every other
+// voice is downloaded in the app. Release and checksum come from the bundled voice catalogue
+// (shiroikuma/voices/gen-voices.py), so the APK's model is exactly the one the catalogue describes.
+tasks.register("fetchOnseModel") {
+    group = "build"
+    description = "Place the verified No.7 voice model (6.vvm) at app/src/onse/res/raw/model.vvm."
+    def catalogFile = new File(projectDir, "src/onse/assets/voices/catalog.json")
+    def target = new File(projectDir, "src/onse/res/raw/model.vvm")
+    def cacheDir = new File(repoRoot, ".scratch")
+    doLast {
+        def catalog = new groovy.json.JsonSlurper().parse(catalogFile)
+        def model = catalog.models.find { it.bundled }
+        def sha = { File f ->
+            def md = java.security.MessageDigest.getInstance("SHA-256")
+            f.withInputStream { is -> byte[] buf = new byte[1 << 20]; int n; while ((n = is.read(buf)) > 0) md.update(buf, 0, n) }
+            md.digest().encodeHex().toString()
+        }
+        if (target.isFile() && target.length() == model.size && sha(target) == model.sha256) return
+        target.parentFile.mkdirs()
+        def cached = new File(cacheDir, "vvm-${catalog.release}/${model.file}")
+        def part = new File(target.path + ".part")
+        if (cached.isFile() && cached.length() == model.size) {
+            java.nio.file.Files.copy(cached.toPath(), part.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        } else {
+            println "shiroikuma: downloading ${model.url}"
+            new URL(model.url).withInputStream { i -> part.withOutputStream { o -> o << i } }
+        }
+        if (sha(part) != model.sha256) {
+            part.delete()
+            throw new GradleException("${model.file}: checksum mismatch")
+        }
+        part.renameTo(target)
+        println "shiroikuma: bundled ${model.file} (${model.size} bytes)"
+    }
+}
+// Upstream's downloadVoicevox (core, ONNX Runtime, dictionary tooling) is idempotent; run both
+// before every build so a fresh clone builds without manual steps.
+tasks.named("preBuild") { dependsOn("fetchOnseModel", "downloadVoicevox") }
