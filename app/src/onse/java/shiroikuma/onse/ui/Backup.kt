@@ -11,6 +11,7 @@ import shiroikuma.onse.voice.VoiceStore
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,6 +41,10 @@ object Backup {
     private const val EXIM_PREFS = "onse_eximport" // device-local, never exported
     private const val KEY_DIR = "dir"
     private const val MAX_ENTRY_BYTES = 64L * 1024 * 1024
+    private const val KEY_PENDING_VOICES = "pending_voices"
+
+    /** The last line of the data door's `contains` header. */
+    const val CONTAINS_NO_MODELS = "Voice models are NOT included — the installed ones are re-downloaded when the app next opens"
 
     enum class Cat(val id: String, val label: String, val parent: String? = null, val defaultOn: Boolean = true) {
         UI("ui", "白い熊 音声 UI (colours · fonts · sizes · layout)"),
@@ -65,6 +70,13 @@ object Backup {
 
     fun setDir(context: Context, path: String) {
         eximPrefs(context).edit().putString(KEY_DIR, path.trim().trimEnd('/')).commit()
+    }
+
+    fun pendingVoices(context: Context): Set<String> =
+        eximPrefs(context).getStringSet(KEY_PENDING_VOICES, emptySet()).orEmpty()
+
+    fun setPendingVoices(context: Context, files: Set<String>) {
+        eximPrefs(context).edit().putStringSet(KEY_PENDING_VOICES, files).commit()
     }
 
     fun hasAllFilesAccess(): Boolean = Environment.isExternalStorageManager()
@@ -97,8 +109,45 @@ object Backup {
     data class ExportResult(val file: File, val categories: Int)
 
     /**
-     * Write one archive of [cats] into [dirPath] (or the configured directory). [isCancelled] is
-     * polled between entries; [onProgress] reports `(done, total, category label)`.
+     * The headless export core: one ZIP of [cats] into [out]. [isCancelled] is polled between
+     * entries (never mid-write); [onProgress] gets `(category, position, total)` where position is
+     * 1-based — the contract's "position of the one being written". Used by the UI panel, the §1
+     * automation service and the §2a data door alike. Throws [Cancelled] when cancelled.
+     */
+    fun writeZip(
+        context: Context,
+        cats: Set<Cat>,
+        appVersion: String,
+        out: OutputStream,
+        isCancelled: () -> Boolean = { false },
+        onProgress: (Cat, Int, Int) -> Unit = { _, _, _ -> },
+    ): List<Cat> {
+        val ordered = Cat.entries.filter { it in cats }
+        val zip = ZipOutputStream(out)
+        ordered.forEachIndexed { i, cat ->
+            if (isCancelled()) throw Cancelled()
+            onProgress(cat, i + 1, ordered.size)
+            writeCategory(context, cat, zip)
+        }
+        if (isCancelled()) throw Cancelled()
+        zip.putNextEntry(ZipEntry(MANIFEST))
+        zip.write(
+            JSONObject()
+                .put("format", FORMAT).put("version", VERSION)
+                .put("app", context.packageName).put("appVersion", appVersion)
+                .put("createdTs", System.currentTimeMillis())
+                .put("categories", JSONArray(ordered.map { it.id }))
+                .toString(1).toByteArray(),
+        )
+        zip.closeEntry()
+        zip.finish()
+        zip.flush()
+        return ordered
+    }
+
+    /**
+     * Write one archive into [dirPath] (or the configured directory): `<name>.zip.part` first,
+     * renamed only once complete, deleted on any failure or cancel.
      */
     fun exportToDirectory(
         context: Context,
@@ -106,7 +155,7 @@ object Backup {
         appVersion: String,
         dirPath: String? = dir(context),
         isCancelled: () -> Boolean = { false },
-        onProgress: (Int, Int, String) -> Unit = { _, _, _ -> },
+        onProgress: (Cat, Int, Int) -> Unit = { _, _, _ -> },
     ): ExportResult {
         val dir = File(dirPath ?: error("no-directory"))
         if (!dir.isDirectory && !dir.mkdirs()) error("cannot create $dir")
@@ -114,27 +163,10 @@ object Backup {
         val part = File(dir, "$name.part")
         val target = File(dir, name)
         try {
-            ZipOutputStream(FileOutputStream(part)).use { zip ->
-                val ordered = Cat.entries.filter { it in cats }
-                ordered.forEachIndexed { i, cat ->
-                    if (isCancelled()) throw Cancelled()
-                    onProgress(i, ordered.size, cat.label)
-                    writeCategory(context, cat, zip)
-                }
-                zip.putNextEntry(ZipEntry(MANIFEST))
-                zip.write(
-                    JSONObject()
-                        .put("format", FORMAT).put("version", VERSION)
-                        .put("app", context.packageName).put("appVersion", appVersion)
-                        .put("createdAt", System.currentTimeMillis())
-                        .put("categories", JSONArray(ordered.map { it.id }))
-                        .toString(1).toByteArray(),
-                )
-                zip.closeEntry()
-                onProgress(ordered.size, ordered.size, "done")
-            }
+            val written = FileOutputStream(part).use { writeZip(context, cats, appVersion, it, isCancelled, onProgress) }
+            if (isCancelled()) throw Cancelled()
             if (!part.renameTo(target)) error("could not finish $name")
-            return ExportResult(target, cats.size)
+            return ExportResult(target, written.size)
         } finally {
             part.delete()
         }
@@ -167,6 +199,29 @@ object Backup {
 
     data class ImportResult(val lines: List<String>)
 
+    /** The categories an archive actually carries — a restore asks for these, never "everything". */
+    fun categoriesIn(archive: File): Set<Cat> {
+        val found = mutableSetOf<Cat>()
+        ZipInputStream(FileInputStream(archive)).use { zip ->
+            var e = zip.nextEntry
+            while (e != null) {
+                when {
+                    e.name == "ui.json" -> found += Cat.UI
+                    e.name.startsWith(FONTS_DIR) -> found += Cat.UI_FONTS
+                    e.name == "voice.json" -> found += Cat.VOICE
+                    e.name == "voices.json" -> found += Cat.VOICES
+                }
+                e = zip.nextEntry
+            }
+        }
+        return found
+    }
+
+    /**
+     * Merge [archive]'s [cats] into this app. Every write is durable before this returns — prefs
+     * through `commit()`, fonts through direct file writes — because 応用管理 force-stops the app
+     * the moment an automated import replies OK.
+     */
     fun import(context: Context, archive: File, cats: Set<Cat>): ImportResult {
         val lines = mutableListOf<String>()
         var fonts = 0
@@ -194,8 +249,11 @@ object Backup {
                             val wanted = (0 until arr.length()).map(arr::getString).toSet()
                             val catalog = VoiceCatalog.get(context)
                             val missing = catalog.models.filter { it.file in wanted && !VoiceStore.isInstalled(context, it) }
+                            // Recorded durably first: an automated restore is force-stopped the
+                            // moment it replies, so the downloads resume on the next app start.
+                            setPendingVoices(context, missing.map { it.file }.toSet())
                             missing.forEach { VoiceStore.download(context, it) }
-                            lines += "Installed voices: ${wanted.size} listed, ${missing.size} downloading"
+                            lines += "Installed voices: ${wanted.size} listed, ${missing.size} to download"
                         }
                     }
                 }

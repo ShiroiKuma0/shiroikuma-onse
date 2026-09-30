@@ -10,6 +10,15 @@
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Both automation callers, by name — without this the reply's setPackage fails silently
+         on Android 11+ and the data door cannot read a caller's signature (contract v2 §2a). -->
+    <queries>
+        <package android:name="shiroikuma.oyokanri" />
+        <package android:name="shiroikuma.jiyusagyoban" />
+    </queries>
 
     <application
         android:name="shiroikuma.onse.OnseApp"
@@ -40,6 +49,38 @@
                 android:name="android.speech.tts"
                 android:resource="@xml/tts_config" />
         </service>
+
+        <!-- 保存復元 automation, contract v2: §1 receiver + its export service, §2a data door. -->
+        <receiver
+            android:name="shiroikuma.onse.automation.StateExportReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="${applicationId}.action.EXPORT_STATE" />
+                <action android:name="${applicationId}.action.LIST_CATEGORIES" />
+                <action android:name="${applicationId}.action.CANCEL_EXPORT" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="shiroikuma.onse.automation.StateExportService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <provider
+            android:name="shiroikuma.onse.automation.AutomationProvider"
+            android:authorities="${applicationId}.automation"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider" />
+        <service
+            android:name="shiroikuma.onse.automation.AutomationDataService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Automation data export/import" />
+        </service>
+        <meta-data android:name="shiroikuma.automation.contract" android:value="2" />
+        <meta-data android:name="shiroikuma.automation.format" android:value="1" />
+        <meta-data android:name="shiroikuma.automation.min_format" android:value="1" />
 
         <service
             android:name="dev.ztssst.voicevox_tts.VoicevoxTextToSpeechServiceImplement"

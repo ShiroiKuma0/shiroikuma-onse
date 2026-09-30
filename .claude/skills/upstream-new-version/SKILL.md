@@ -149,6 +149,8 @@ If upstream's `versionName` / `versionCode` moved, set **`BUILD_NUMBER=1`** in
 | Flavour source set | label, icon, de-branding overrides, our code | `app/src/onse/` |
 | Gitignore block | `keystore.properties`, `*.jks`, `/.scratch/` | `.gitignore` |
 | Our guide, plan + skills | present | `CLAUDE.md`, `docs/PLAN.md`, `.claude/skills/` |
+| Voices, main screen, UI page | catalogue + samples, engine, TTS service, launcher, 白い熊 音声 UI | `app/src/onse/assets/voices/`, `app/src/onse/java/shiroikuma/onse/` |
+| Automation contract v2 | receiver + export service, data door, gate rows in Export / Import | `app/src/onse/java/shiroikuma/onse/automation/`, flavour manifest |
 | Feature patches | every shipped customization (keep this table growing as they land) | their files |
 
 Then confirm the build script still evaluates:
