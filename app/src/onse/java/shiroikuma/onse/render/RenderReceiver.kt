@@ -40,6 +40,12 @@ class RenderReceiver : BroadcastReceiver() {
                     done(app, replyAction, replyPackage, requestId, StateExportReceiver.wireError(app, e))
                 }
             }
+            "${app.packageName}$ACTION_PING" -> {
+                val replyAction = intent.getStringExtra(EXTRA_REPLY_ACTION) ?: return
+                val replyPackage = intent.getStringExtra(EXTRA_REPLY_PACKAGE) ?: return
+                val requestId = intent.getStringExtra(EXTRA_REQUEST_ID) ?: ""
+                pong(app, replyAction, replyPackage, requestId, AutomationAuth.refuse(app, token))
+            }
             "${app.packageName}$ACTION_CANCEL_RENDER" -> {
                 if (AutomationAuth.refuse(app, token) != null) return
                 RenderService.requestCancel(intent.getStringExtra(EXTRA_REQUEST_ID))
@@ -50,6 +56,7 @@ class RenderReceiver : BroadcastReceiver() {
     companion object {
         const val ACTION_RENDER = ".action.RENDER"
         const val ACTION_CANCEL_RENDER = ".action.CANCEL_RENDER"
+        const val ACTION_PING = ".action.PING"
 
         const val EXTRA_TOKEN = "token"
         const val EXTRA_REQUEST_ID = "request_id"
@@ -65,6 +72,31 @@ class RenderReceiver : BroadcastReceiver() {
         const val EXTRA_GAP_POST = "gap_post"
         const val EXTRA_BITRATE = "bitrate_kbps"
         const val EXTRA_FORMAT = "format"
+
+        /**
+         * `PING` → `event=pong`: `result` is `OK` (or the gate's `ERROR:`), plus `version`,
+         * `styles` (installed readable style ids, comma-separated), `storage` and `battery_exempt`
+         * (`true`/`false`) — so a caller can tell "not running" from "slow", and see why a render
+         * would fail before sending one.
+         */
+        fun pong(context: Context, replyAction: String, replyPackage: String, requestId: String, refusal: String?) {
+            val catalog = shiroikuma.onse.voice.VoiceCatalog.get(context)
+            val styles = catalog.readable.filter { shiroikuma.onse.voice.VoiceStore.isInstalled(context, it.model) }
+                .joinToString(",") { it.style.id.toString() }
+            context.sendBroadcast(
+                Intent(replyAction).apply {
+                    setPackage(replyPackage)
+                    addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                    putExtra(EXTRA_REQUEST_ID, requestId)
+                    putExtra("event", "pong")
+                    putExtra("result", refusal ?: "OK")
+                    putExtra("version", runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull().orEmpty())
+                    putExtra("styles", if (refusal == null) styles else "")
+                    putExtra("storage", android.os.Environment.isExternalStorageManager().toString())
+                    putExtra("battery_exempt", shiroikuma.onse.ui.isBatteryExempt(context).toString())
+                },
+            )
+        }
 
         /** The terminal answer for a request: `event=done`, `result` = `OK:…` or `ERROR:…`. */
         fun done(context: Context, replyAction: String, replyPackage: String, requestId: String, result: String) {
