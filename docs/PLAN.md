@@ -40,7 +40,7 @@ A generic VOICEVOX sister app:
 4. ✅ First build, then push.
 5. ✅ Bring the UI in line with the sister repos (study `shiroikuma-denwa`, `shiroikuma-messeji`, …) and
    build the **白い熊 音声 UI** page (below).
-6. The render contract and OGG encoding (✅ core 0.17, No.7 bundled, every voice downloadable with bundled samples).
+6. ✅ The render contract and OGG encoding (`docs/sister-app-contract-onse-render.md`); core 0.17, No.7 bundled, every voice downloadable with bundled samples.
 7. ✅ The backup-automation hand-off from `shiroikuma-jiyusagyoban` (contract v2, `app/src/onse/java/shiroikuma/onse/automation/`). Still open on jiyusagyoban's side: `shiroikuma.onse` in its `<queries>` and a 「保存 ⇨ shiroikuma.onse」 roster task.
 
 ## The 白い熊 音声 UI page — 白い熊's requirements (2026-09-29)

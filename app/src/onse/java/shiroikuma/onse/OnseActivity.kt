@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import shiroikuma.onse.ui.OnseTheme
+import shiroikuma.onse.ui.StorageAccessGate
 import shiroikuma.onse.ui.UiPage
 import shiroikuma.onse.ui.UiStore
 
@@ -42,6 +43,7 @@ class OnseActivity : ComponentActivity() {
                     if (uiPage) UiPage(version, onBack = { uiPage = false })
                     else MainScreen(version, onOpenUi = { uiPage = true })
                 }
+                StorageAccessGate()
             }
         }
     }

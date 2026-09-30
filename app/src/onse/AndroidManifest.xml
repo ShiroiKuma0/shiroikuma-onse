@@ -78,6 +78,25 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Automation data export/import" />
         </service>
+        <!-- The render contract (docs/sister-app-contract-onse-render.md): sister apps hand over a
+             batch of sentences and get OGG/Opus files at the paths they name. -->
+        <receiver
+            android:name="shiroikuma.onse.render.RenderReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="${applicationId}.action.RENDER" />
+                <action android:name="${applicationId}.action.CANCEL_RENDER" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="shiroikuma.onse.render.RenderService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="VOICEVOX speech rendering for sister apps" />
+        </service>
         <meta-data android:name="shiroikuma.automation.contract" android:value="2" />
         <meta-data android:name="shiroikuma.automation.format" android:value="1" />
         <meta-data android:name="shiroikuma.automation.min_format" android:value="1" />

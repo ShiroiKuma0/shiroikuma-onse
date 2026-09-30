@@ -41,6 +41,14 @@ Built on upstream `master` at `bfbe4f2` (2026-01-25).
   heartbeat; spooled, durable import); the gate ON with the token opt-in — its three rows in the
   Export / Import section. Voices a restore lists are re-downloaded when the app next opens.
 
+- **The render service** for sister apps (`docs/sister-app-contract-onse-render.md`):
+  `shiroikuma.onse.action.RENDER` takes a batch of sentences and writes one OGG/Opus file per
+  sentence at the exact path the caller names (device Opus encoder + OGG muxer, `.part` then
+  rename, so a re-render replaces atomically); voice, speed, pitch, intonation, volume, pauses,
+  bitrate and format per request; a reply per item (duration or error) and one `done`;
+  `CANCEL_RENDER`; requests queue on a foreground service.
+- **All-files access is checked on every entry** into the app and requested with an explanation.
+
 # Upstream — VOICEVOX TTS Engine for Android
 
 ## Unreleased on `master` (2025-03-17 – 2026-01-25)
