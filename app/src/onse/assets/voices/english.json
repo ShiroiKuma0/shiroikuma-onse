@@ -1,0 +1,216 @@
+{
+ "model": "kokoro-int8-multi-lang-v1_0",
+ "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-int8-multi-lang-v1_0.tar.bz2",
+ "size": 132303094,
+ "sha256": "4c3052abaa60943a341f193888cf6abd68787dae6ab8ae5c925a706caa247e4e",
+ "sampleRate": 24000,
+ "keep": [
+  "model.int8.onnx",
+  "voices.bin",
+  "tokens.txt",
+  "lexicon-us-en.txt",
+  "lexicon-gb-en.txt",
+  "espeak-ng-data/",
+  "LICENSE"
+ ],
+ "defaultVoice": "am_michael",
+ "sampleText": "Hello. This is a sample of my English voice.",
+ "voices": [
+  {
+   "sid": 0,
+   "name": "af_alloy",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_alloy.ogg"
+  },
+  {
+   "sid": 1,
+   "name": "af_aoede",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_aoede.ogg"
+  },
+  {
+   "sid": 2,
+   "name": "af_bella",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_bella.ogg"
+  },
+  {
+   "sid": 3,
+   "name": "af_heart",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_heart.ogg"
+  },
+  {
+   "sid": 4,
+   "name": "af_jessica",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_jessica.ogg"
+  },
+  {
+   "sid": 5,
+   "name": "af_kore",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_kore.ogg"
+  },
+  {
+   "sid": 6,
+   "name": "af_nicole",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_nicole.ogg"
+  },
+  {
+   "sid": 7,
+   "name": "af_nova",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_nova.ogg"
+  },
+  {
+   "sid": 8,
+   "name": "af_river",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_river.ogg"
+  },
+  {
+   "sid": 9,
+   "name": "af_sarah",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_sarah.ogg"
+  },
+  {
+   "sid": 10,
+   "name": "af_sky",
+   "accent": "US",
+   "female": true,
+   "sample": "english/af_sky.ogg"
+  },
+  {
+   "sid": 11,
+   "name": "am_adam",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_adam.ogg"
+  },
+  {
+   "sid": 12,
+   "name": "am_echo",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_echo.ogg"
+  },
+  {
+   "sid": 13,
+   "name": "am_eric",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_eric.ogg"
+  },
+  {
+   "sid": 14,
+   "name": "am_fenrir",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_fenrir.ogg"
+  },
+  {
+   "sid": 15,
+   "name": "am_liam",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_liam.ogg"
+  },
+  {
+   "sid": 16,
+   "name": "am_michael",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_michael.ogg"
+  },
+  {
+   "sid": 17,
+   "name": "am_onyx",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_onyx.ogg"
+  },
+  {
+   "sid": 18,
+   "name": "am_puck",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_puck.ogg"
+  },
+  {
+   "sid": 19,
+   "name": "am_santa",
+   "accent": "US",
+   "female": false,
+   "sample": "english/am_santa.ogg"
+  },
+  {
+   "sid": 20,
+   "name": "bf_alice",
+   "accent": "UK",
+   "female": true,
+   "sample": "english/bf_alice.ogg"
+  },
+  {
+   "sid": 21,
+   "name": "bf_emma",
+   "accent": "UK",
+   "female": true,
+   "sample": "english/bf_emma.ogg"
+  },
+  {
+   "sid": 22,
+   "name": "bf_isabella",
+   "accent": "UK",
+   "female": true,
+   "sample": "english/bf_isabella.ogg"
+  },
+  {
+   "sid": 23,
+   "name": "bf_lily",
+   "accent": "UK",
+   "female": true,
+   "sample": "english/bf_lily.ogg"
+  },
+  {
+   "sid": 24,
+   "name": "bm_daniel",
+   "accent": "UK",
+   "female": false,
+   "sample": "english/bm_daniel.ogg"
+  },
+  {
+   "sid": 25,
+   "name": "bm_fable",
+   "accent": "UK",
+   "female": false,
+   "sample": "english/bm_fable.ogg"
+  },
+  {
+   "sid": 26,
+   "name": "bm_george",
+   "accent": "UK",
+   "female": false,
+   "sample": "english/bm_george.ogg"
+  },
+  {
+   "sid": 27,
+   "name": "bm_lewis",
+   "accent": "UK",
+   "female": false,
+   "sample": "english/bm_lewis.ogg"
+  }
+ ]
+}

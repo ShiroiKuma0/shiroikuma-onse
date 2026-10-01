@@ -23,11 +23,15 @@ data class VoiceSettings(
     val postPauseMs: Int = 100,
     /** Follow the calling app's speech-rate setting (Android TTS) on top of [speedPct]. */
     val followSystemRate: Boolean = true,
+    /** English (Kokoro) voice and speed — default am_michael (白い熊, 2026-10-01). */
+    val enVoice: String = PREFERRED_EN_VOICE,
+    val enSpeedPct: Int = 100,
 ) {
     companion object {
         /** No.7 / 読み聞かせ — the 白い熊 voice. */
         const val PREFERRED_STYLE = 31
         const val PREFERRED_LABEL = "No.7（読み聞かせ）"
+        const val PREFERRED_EN_VOICE = "am_michael"
     }
 }
 
@@ -74,6 +78,8 @@ object VoiceSettingsStore {
             prePauseMs = p.getInt("prePauseMs", d.prePauseMs),
             postPauseMs = p.getInt("postPauseMs", d.postPauseMs),
             followSystemRate = p.getBoolean("followSystemRate", d.followSystemRate),
+            enVoice = p.getString("enVoice", d.enVoice) ?: d.enVoice,
+            enSpeedPct = p.getInt("enSpeedPct", d.enSpeedPct),
         )
     }
 
@@ -87,6 +93,8 @@ object VoiceSettingsStore {
             .putInt("prePauseMs", v.prePauseMs)
             .putInt("postPauseMs", v.postPauseMs)
             .putBoolean("followSystemRate", v.followSystemRate)
+            .putString("enVoice", v.enVoice)
+            .putInt("enSpeedPct", v.enSpeedPct)
             .commit() // the TTS service reads this file from its own process start
     }
 }

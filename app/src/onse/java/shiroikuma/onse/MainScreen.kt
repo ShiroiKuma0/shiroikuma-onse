@@ -86,10 +86,14 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
     val states by VoiceStore.states.collectAsState()
     val player by VoicePlayer.status.collectAsState()
     val catalog = remember { VoiceCatalog.get(context) }
+    val english = remember { shiroikuma.onse.english.EnglishCatalog.get(context) }
+    val enState by shiroikuma.onse.english.EnglishStore.state.collectAsState()
     var tick by remember { mutableIntStateOf(0) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(Unit) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) { VoiceStore.refresh(context); tick++ }
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            VoiceStore.refresh(context); shiroikuma.onse.english.EnglishStore.refresh(context); tick++
+        }
     }
     var text by rememberSaveable { mutableStateOf("こんにちは。白い熊の音声です。今日はいい天気ですね。") }
     val current = catalog.choiceFor(voice.styleId)
@@ -144,13 +148,13 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(),
                         textStyle = TextStyle(fontSize = p.tryTextSizeSp.sp, color = Color(p.text), fontFamily = p.family()),
                         colors = houseFieldColors(),
-                        label = { Text("読み上げるテキスト") },
+                        label = { Text("読み上げるテキスト — Japanese, or English (Kokoro)") },
                     )
                     val shape = RoundedCornerShape(p.buttonCornerPct.coerceIn(0, 50))
                     Box(
                         Modifier.padding(top = 8.dp).fillMaxWidth().height(p.speakButtonHeightDp.dp).clip(shape)
                             .border(p.buttonBorderWidthDp.dp, Color(p.accent), shape)
-                            .clickable { if (player.busy) VoicePlayer.stop() else VoicePlayer.speak(context, text, voice.styleId) },
+                            .clickable { if (player.busy) VoicePlayer.stop() else speakTry(context, text, voice.styleId) },
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -180,6 +184,71 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
                     }
                 }
             }
+            // ---- English voices (Kokoro) ---------------------------------------------------------
+            item { SectionHeader("English voices", p) }
+            item {
+                RowScaffold(0, p) {
+                    TitledText(
+                        "Preferred: ${VoiceSettings.PREFERRED_EN_VOICE}",
+                        if (voice.enVoice == VoiceSettings.PREFERRED_EN_VOICE) "In use — the English voice of the 言語島 cards." else "Now using ${voice.enVoice}.",
+                        Modifier.weight(1f),
+                    )
+                    Pill("Reselect default", enabled = voice.enVoice != VoiceSettings.PREFERRED_EN_VOICE) {
+                        VoiceSettingsStore.update { it.copy(enVoice = VoiceSettings.PREFERRED_EN_VOICE) }
+                    }
+                }
+            }
+            item {
+                RowScaffold(0, p) {
+                    val (title, note) = when (val s = enState) {
+                        is shiroikuma.onse.english.EnglishStore.State.Installed -> "Kokoro English model" to "installed (${english.model})"
+                        is shiroikuma.onse.english.EnglishStore.State.Downloading -> "Kokoro English model" to "downloading ${s.done * 100 / s.total.coerceAtLeast(1)} %"
+                        is shiroikuma.onse.english.EnglishStore.State.Unpacking -> "Kokoro English model" to "unpacking…"
+                        is shiroikuma.onse.english.EnglishStore.State.Failed -> "Kokoro English model" to "failed: ${s.message}"
+                        else -> "Kokoro English model" to "not downloaded — one model holds every English voice below"
+                    }
+                    TitledText(title, note, Modifier.weight(1f))
+                    when (enState) {
+                        is shiroikuma.onse.english.EnglishStore.State.Installed -> Pill("Delete") { shiroikuma.onse.english.EnglishStore.delete(context) }
+                        is shiroikuma.onse.english.EnglishStore.State.Downloading -> Pill("Stop") { shiroikuma.onse.english.EnglishStore.cancel() }
+                        is shiroikuma.onse.english.EnglishStore.State.Unpacking -> Unit
+                        else -> Pill("⤓ ${Backup.humanSize(english.size)}") { shiroikuma.onse.english.EnglishStore.download(context) }
+                    }
+                }
+            }
+            listOf("US" to true, "US" to false, "UK" to true, "UK" to false).forEach { (accent, female) ->
+                item(key = "en-h-$accent-$female") { SubHeader("$accent ${if (female) "female" else "male"}", p) }
+                english.voices.filter { it.accent == accent && it.female == female }.forEach { v ->
+                    item(key = "en-${v.name}") {
+                        val installed = enState is shiroikuma.onse.english.EnglishStore.State.Installed
+                        val selected = v.name == voice.enVoice
+                        Row(
+                            Modifier.fillMaxWidth()
+                                .background(if (selected) Color(p.selection) else Color.Transparent)
+                                .clickable(enabled = installed) { VoiceSettingsStore.update { it.copy(enVoice = v.name) } }
+                                .padding(start = shiroikuma.onse.ui.rowIndent(1, p), end = 12.dp, top = p.voiceRowPadDp.dp, bottom = p.voiceRowPadDp.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            Text(
+                                if (player.playingSample == 100_000 + v.sid) "♪" else "▶",
+                                Modifier.clip(CircleShape).clickable { VoicePlayer.playSample(context, 100_000 + v.sid, v.sample) }
+                                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                                color = Color(p.accent), fontSize = 20.sp,
+                            )
+                            Text(
+                                v.name + if (v.name == VoiceSettings.PREFERRED_EN_VOICE) "  ★" else "",
+                                Modifier.weight(1f),
+                                color = Color(if (installed) p.text else p.textSecondary),
+                                fontSize = p.bodySizeSp.sp, fontFamily = p.family(),
+                                fontWeight = if (selected) FontWeight.Bold else null,
+                            )
+                            if (selected) Text("✓", color = Color(p.accent), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+
             val singing = catalog.models.filter { it.singing }
             if (singing.isNotEmpty()) {
                 item { SectionHeader("Singing voices", p) }
@@ -214,7 +283,7 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
                             color = Color(p.textSecondary), fontSize = p.labelSizeSp.sp,
                         )
                         Text(
-                            "Built on VOICEVOX TTS Engine for Android (MIT) · VOICEVOX CORE (MIT) · VOICEVOX ONNX Runtime (MIT) · OpenJTalk (© 2009 Nara Institute of Science and Technology) · Gson (Apache 2.0).",
+                            "Built on VOICEVOX TTS Engine for Android (MIT) · VOICEVOX CORE (MIT) · VOICEVOX ONNX Runtime (MIT) · OpenJTalk (© 2009 Nara Institute of Science and Technology) · Gson (Apache 2.0). English: Kokoro-82M (Apache 2.0) via sherpa-onnx (Apache 2.0, with ONNX Runtime, MIT) · Apache Commons Compress (Apache 2.0).",
                             color = Color(p.textSecondary), fontSize = p.labelSizeSp.sp,
                         )
                     }
@@ -301,6 +370,12 @@ private fun modelNote(model: VoiceModel, state: VoiceStore.State?): String = whe
     state is VoiceStore.State.Downloading -> "${model.file} · downloading ${state.done * 100 / state.total.coerceAtLeast(1)} %"
     state is VoiceStore.State.Failed -> "${model.file} · failed: ${state.message}"
     else -> "${model.file} · not downloaded"
+}
+
+/** The try-it box reads Japanese with VOICEVOX and text without any kana/kanji with Kokoro English. */
+private fun speakTry(context: Context, text: String, styleId: Int) {
+    val japanese = text.any { Character.UnicodeScript.of(it.code) in setOf(Character.UnicodeScript.HIRAGANA, Character.UnicodeScript.KATAKANA, Character.UnicodeScript.HAN) }
+    if (japanese) VoicePlayer.speak(context, text, styleId) else VoicePlayer.speakEnglish(context, text)
 }
 
 private fun isDefaultEngine(context: Context): Boolean =

@@ -42,6 +42,8 @@ object Backup {
     private const val KEY_DIR = "dir"
     private const val MAX_ENTRY_BYTES = 64L * 1024 * 1024
     private const val KEY_PENDING_VOICES = "pending_voices"
+    /** The English (Kokoro) model's entry in the installed-voices list. */
+    const val ENGLISH_MARKER = "english:kokoro"
 
     /** The last line of the data door's `contains` header. */
     const val CONTAINS_NO_MODELS = "Voice models are NOT included — the installed ones are re-downloaded when the app next opens"
@@ -189,7 +191,8 @@ object Backup {
             )
             Cat.VOICES -> {
                 val installed = VoiceCatalog.get(context).models
-                    .filter { !it.bundled && VoiceStore.isInstalled(context, it) }.map { it.file }
+                    .filter { !it.bundled && VoiceStore.isInstalled(context, it) }.map { it.file } +
+                    (if (shiroikuma.onse.english.EnglishStore.isInstalled(context)) listOf(ENGLISH_MARKER) else emptyList())
                 entry("voices.json", JSONObject().put("installed", JSONArray(installed)).toString(1).toByteArray())
             }
         }
@@ -249,11 +252,13 @@ object Backup {
                             val wanted = (0 until arr.length()).map(arr::getString).toSet()
                             val catalog = VoiceCatalog.get(context)
                             val missing = catalog.models.filter { it.file in wanted && !VoiceStore.isInstalled(context, it) }
+                            val englishMissing = ENGLISH_MARKER in wanted && !shiroikuma.onse.english.EnglishStore.isInstalled(context)
                             // Recorded durably first: an automated restore is force-stopped the
                             // moment it replies, so the downloads resume on the next app start.
-                            setPendingVoices(context, missing.map { it.file }.toSet())
+                            setPendingVoices(context, missing.map { it.file }.toSet() + (if (englishMissing) setOf(ENGLISH_MARKER) else emptySet()))
                             missing.forEach { VoiceStore.download(context, it) }
-                            lines += "Installed voices: ${wanted.size} listed, ${missing.size} to download"
+                            if (englishMissing) shiroikuma.onse.english.EnglishStore.download(context)
+                            lines += "Installed voices: ${wanted.size} listed, ${missing.size + (if (englishMissing) 1 else 0)} to download"
                         }
                     }
                 }

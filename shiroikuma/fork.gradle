@@ -157,3 +157,37 @@ tasks.register("fetchOnseModel") {
 // Upstream's downloadVoicevox (core, ONNX Runtime, dictionary tooling) is idempotent; run both
 // before every build so a fresh clone builds without manual steps.
 tasks.named("preBuild") { dependsOn("fetchOnseModel", "downloadVoicevox") }
+
+// --- English TTS: sherpa-onnx (Kokoro-82M) ------------------------------------------------------
+// The static-link build: ONNX Runtime is linked INTO libsherpa-onnx-jni.so, so no second
+// libonnxruntime.so is packaged next to VOICEVOX's libvoicevox_onnxruntime.so. Not on Maven
+// Central — fetched from the GitHub release into shiroikuma/libs/ (gitignored), SHA-256 pinned.
+def sherpaVersion = "1.13.8"
+def sherpaAar = new File(repoRoot, "shiroikuma/libs/sherpa-onnx-static-link-onnxruntime-${sherpaVersion}.aar")
+def sherpaSha256 = "b22c3fc1b6a45666d28892bb2f7694beeb77a8362d7ebd77c1a5431ec9435471"
+tasks.register("fetchSherpaOnnx") {
+    group = "build"
+    description = "Fetch the pinned sherpa-onnx Android AAR (static ONNX Runtime) into shiroikuma/libs."
+    def target = sherpaAar
+    def sha = sherpaSha256
+    def url = "https://github.com/k2-fsa/sherpa-onnx/releases/download/v${sherpaVersion}/${sherpaAar.name}"
+    doLast {
+        def digest = { File f ->
+            def md = java.security.MessageDigest.getInstance("SHA-256")
+            f.withInputStream { is -> byte[] buf = new byte[1 << 20]; int n; while ((n = is.read(buf)) > 0) md.update(buf, 0, n) }
+            md.digest().encodeHex().toString()
+        }
+        if (target.isFile() && digest(target) == sha) return
+        target.parentFile.mkdirs()
+        def part = new File(target.path + ".part")
+        println "shiroikuma: downloading ${url}"
+        new URL(url).withInputStream { i -> part.withOutputStream { o -> o << i } }
+        if (digest(part) != sha) { part.delete(); throw new GradleException("${target.name}: checksum mismatch") }
+        part.renameTo(target)
+    }
+}
+tasks.named("preBuild") { dependsOn("fetchSherpaOnnx") }
+dependencies {
+    onseImplementation files(sherpaAar)
+    onseImplementation "org.apache.commons:commons-compress:1.27.1"   // unpacks the Kokoro .tar.bz2 on the phone
+}

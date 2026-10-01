@@ -55,6 +55,15 @@ Built on upstream `master` at `bfbe4f2` (2026-01-25).
   without the exemption EMUI refuses the render service's start from the background (measured on
   the Mate XT); the dialog requests it and names the Huawei App-launch settings.
 
+- **English voices — Kokoro-82M** (Apache-2.0) through sherpa-onnx (its static build, so no
+  second ONNX Runtime library sits beside VOICEVOX's): 28 US/UK voices with bundled samples, the
+  ≈132 MB model downloaded in-app (verified, English parts unpacked), default **am_michael**
+  with a *Reselect default* button, English speed on the UI page, English in the try-it box, and
+  `lang=en` / `en_voice` in the render contract (PING reports `en_installed`, `en_voices`).
+
+- **Sample and render quality:** the bundled voice samples are now Opus at 48 kbps in general-audio
+  mode (they were 20 kbps "voip", which audibly dulled them), and renders default to 48 kbps.
+
 # Upstream — VOICEVOX TTS Engine for Android
 
 ## Unreleased on `master` (2025-03-17 – 2026-01-25)

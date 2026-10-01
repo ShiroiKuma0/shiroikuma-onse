@@ -94,6 +94,11 @@ class RenderService : Service() {
             }
             val items = JSONObject(File(r.batchPath).readText()).getJSONArray("items")
             total = items.length()
+            val english = params.getStringExtra(RenderReceiver.EXTRA_LANG).equals("en", true)
+            if (english) {
+                renderEnglish(r, items, total).let { (o, f) -> ok = o; failed = f }
+                return
+            }
             val catalog = VoiceCatalog.get(app)
             val style = params.getStringExtra(RenderReceiver.EXTRA_SPEAKER)?.toIntOrNull() ?: VoiceSettings.PREFERRED_STYLE
             val model = catalog.modelFor(style)
@@ -147,6 +152,60 @@ class RenderService : Service() {
                 stopSelf()
             }
         }
+    }
+
+    /**
+     * `lang=en`: Kokoro English. `en_voice` (default the app's English voice, am_michael) and
+     * `speed` (default the app's English speed). Same files, replies and `done` as Japanese.
+     * Returns (ok, failed).
+     */
+    private fun renderEnglish(r: Request, items: org.json.JSONArray, total: Int): Pair<Int, Int> {
+        val app = applicationContext
+        val params = r.params
+        val settings = shiroikuma.onse.voice.VoiceSettingsStore.current(app)
+        val voice = params.getStringExtra(RenderReceiver.EXTRA_EN_VOICE)?.takeIf { it.isNotBlank() } ?: settings.enVoice
+        val speed = params.getStringExtra(RenderReceiver.EXTRA_SPEED)?.toFloatOrNull() ?: (settings.enSpeedPct / 100f)
+        if (!shiroikuma.onse.english.EnglishStore.isInstalled(app)) {
+            RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:english model not installed")
+            return 0 to 0
+        }
+        if (shiroikuma.onse.english.EnglishCatalog.get(app).voice(voice) == null) {
+            RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:unknown english voice: $voice")
+            return 0 to 0
+        }
+        val wantWav = params.getStringExtra(RenderReceiver.EXTRA_FORMAT).equals("wav", true)
+        if (!wantWav && !OggOpusWriter.isAvailable()) {
+            RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:no-opus-encoder (ask for format=wav)")
+            return 0 to 0
+        }
+        val bitrate = params.getStringExtra(RenderReceiver.EXTRA_BITRATE)?.toIntOrNull() ?: DEFAULT_BITRATE_KBPS
+        var ok = 0
+        var failed = 0
+        for (i in 0 until total) {
+            if (cancelledRequests.remove(r.requestId) != null) {
+                RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:cancelled|$ok|$failed|$total")
+                return ok to failed
+            }
+            val item = items.getJSONObject(i)
+            val id = item.optString("id")
+            val outPath = item.optString("out_path")
+            updateNotification("English ${i + 1}/$total")
+            try {
+                require(outPath.startsWith("/")) { "out_path must be absolute" }
+                val pcm = shiroikuma.onse.english.EnglishEngine.synthesizePcm(app, item.getString("text"), voice, speed)
+                val rate = shiroikuma.onse.english.EnglishEngine.SAMPLE_RATE
+                if (wantWav) OggOpusWriter.writeWav(shiroikuma.onse.english.EnglishEngine.wav(pcm), File(outPath))
+                else OggOpusWriter.write(pcm, rate, bitrate, File(outPath))
+                ok++
+                RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, pcm.size / 2L * 1000 / rate, null, i + 1, total)
+            } catch (e: Exception) {
+                failed++
+                Log.w(TAG, "english item $id failed", e)
+                RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, false, outPath, 0, e.message ?: e.javaClass.simpleName, i + 1, total)
+            }
+        }
+        RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "OK:$ok|$failed|$total")
+        return ok to failed
     }
 
     /** Request parameters over the app's own voice settings; scales as decimals (`1.15`). */
@@ -203,7 +262,7 @@ class RenderService : Service() {
         private const val TAG = "OnseRender"
         private const val CHANNEL = "onse_render"
         private const val NOTIFICATION_ID = 92_003
-        const val DEFAULT_BITRATE_KBPS = 32
+        const val DEFAULT_BITRATE_KBPS = 48
 
         private val cancelledRequests = ConcurrentHashMap<String, Boolean>()
 

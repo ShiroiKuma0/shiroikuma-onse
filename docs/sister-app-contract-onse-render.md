@@ -1,7 +1,7 @@
 # Sister-app contract — 白い熊 音声 render service
 
 **Callee:** `shiroikuma.onse` (白い熊 音声). **First caller:** 白い熊 自由作業盤's 言語島 (日本語 [227]).
-Revision 2026-09-30.
+Revision 2026-10-01 — adds English (`lang=en`, Kokoro-82M).
 
 A caller hands 音声 a batch of Japanese sentences and gets back one audio file per sentence, written
 **exactly at the absolute path the caller names**. 音声 knows nothing about where or how the caller
@@ -27,10 +27,16 @@ Explicit to package `shiroikuma.onse`, with `--include-stopped-packages` semanti
 | `intonation` | no | intonationScale (default `1.0`) |
 | `volume` | no | volumeScale (default `1.0`) |
 | `gap_pre`, `gap_post` | no | silence before / after, in seconds (default `0.1`) |
-| `bitrate_kbps` | no | Opus bitrate (default `32`) |
+| `bitrate_kbps` | no | Opus bitrate (default `48`) |
 | `format` | no | `ogg` (default: OGG/Opus, mono 24 kHz) or `wav` |
+| `lang` | no | `ja` (default, VOICEVOX) or `en` (Kokoro-82M English) |
+| `en_voice` | no | with `lang=en`: Kokoro voice name, e.g. `am_michael` (default: 音声's English voice, am_michael) |
 | `token` | no | only checked when 「Use authorization token?」 is on in 白い熊 音声 UI |
 
+- With `lang=en`, `speaker`, `pitch`, `intonation`, `volume` and the gaps are ignored; `speed` is
+  Kokoro's speed (default 音声's English speed, 1.0). English needs the Kokoro model downloaded in
+  音声 (main screen → English voices → ⤓, ≈132 MB); without it the request answers
+  `ERROR:english model not installed`. The 28 voices are af_*/am_* (US) and bf_*/bm_* (UK).
 - `text` is what VOICEVOX reads. A caller controlling pronunciation replaces a word by its
   **katakana** reading before sending; VOICEVOX reads katakana verbatim.
 - `out_path` must be absolute. Parent directories are created. The file is written as
@@ -63,7 +69,7 @@ Then exactly one terminal reply:
 
 Reasons worth keying on: `automation disabled`, `bad token`, `no-storage-access`,
 `no-foreground-start`, `voice not installed: <style> (<model file>)`, `unknown speaker: <style>`,
-`no-opus-encoder`, `cancelled`.
+`no-opus-encoder`, `english model not installed`, `unknown english voice: <name>`, `cancelled`.
 
 ## Cancel — broadcast `shiroikuma.onse.action.CANCEL_RENDER`
 
@@ -83,6 +89,9 @@ Extras `reply_action`, `reply_package`, optional `request_id` and `token`. Answe
 | `styles` | installed readable style ids, comma-separated |
 | `storage` | `true` when All-Files access is granted (renders need it) |
 | `battery_exempt` | `true` when 音声 is exempt from battery optimisation (cold renders need it) |
+| `en_installed` | `true` when the Kokoro English model is installed |
+| `en_voices` | every English voice name, comma-separated |
+| `en_default` | 音声's selected English voice |
 
 No pong within a few seconds means 音声 is not running and could not be started — e.g. EMUI's App
 launch refused it — as opposed to a render that is merely slow.

@@ -236,10 +236,30 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
             }
             item {
                 RowScaffold(0, p, onClick = {
-                    VoiceSettingsStore.update { VoiceSettings(styleId = it.styleId) }
+                    VoiceSettingsStore.update { VoiceSettings(styleId = it.styleId, enVoice = it.enVoice, enSpeedPct = it.enSpeedPct) }
                     toast = "Voice knobs back to the 白い熊 defaults"
                 }) {
                     TitledText("Restore the 白い熊 voice defaults", "Speed 115 %, pitch 0, intonation 100 %, volume 100 %, pauses 100 ms.", Modifier.weight(1f))
+                }
+            }
+
+            // ---- English voice ------------------------------------------------------------------
+            item { SectionHeader("English voice", p) }
+            item {
+                PreviewCard(0, p) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Kokoro — ${voice.enVoice}", color = Color(p.text), fontWeight = FontWeight.Bold, fontFamily = p.family())
+                            Text("speed ${pct(voice.enSpeedPct)}", color = Color(p.textSecondary), fontSize = p.labelSizeSp.sp, fontFamily = p.family())
+                        }
+                        Pill("▶ Listen") { VoicePlayer.speakEnglish(context, "I worked seven years in Russia, and I still read the news in Russian.") }
+                    }
+                }
+            }
+            item { NoteText("The English voice and its model download are on the main screen.", 0, p) }
+            item {
+                SliderRow(0, p, "English speed", voice.enSpeedPct, pct(voice.enSpeedPct), 50..200, 5) { v ->
+                    VoiceSettingsStore.update { it.copy(enSpeedPct = v) }
                 }
             }
 
