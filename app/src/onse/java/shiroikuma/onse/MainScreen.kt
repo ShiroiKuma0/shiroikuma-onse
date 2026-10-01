@@ -115,6 +115,12 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
                     false, p,
                 )
                 StatusLine("Dictionary", "OpenJTalk (bundled)", false, p)
+                val enOk = enState is shiroikuma.onse.english.EnglishStore.State.Installed
+                StatusLine(
+                    "English (Kokoro)",
+                    if (enOk) "Installed — voice ${voice.enVoice}" else "Model not downloaded — English does not work (see English voices below)",
+                    !enOk, p,
+                )
             }
             item {
                 Row(Modifier.padding(start = shiroikuma.onse.ui.rowIndent(0, p), top = 4.dp, bottom = 4.dp)) {
@@ -185,29 +191,25 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
                 }
             }
             // ---- English voices (Kokoro) ---------------------------------------------------------
+            // Nothing English works until the model is downloaded — say so in red, model row first.
             item { SectionHeader("English voices", p) }
             item {
                 RowScaffold(0, p) {
+                    val enInstalled = enState is shiroikuma.onse.english.EnglishStore.State.Installed
+                    val note = when (val s = enState) {
+                        is shiroikuma.onse.english.EnglishStore.State.Installed -> "Installed (${english.model}) — English works."
+                        is shiroikuma.onse.english.EnglishStore.State.Downloading -> "Downloading ${s.done * 100 / s.total.coerceAtLeast(1)} % — English will work once it is installed."
+                        is shiroikuma.onse.english.EnglishStore.State.Unpacking -> "Unpacking… — English will work once it is installed."
+                        is shiroikuma.onse.english.EnglishStore.State.Failed -> "Download failed: ${s.message}. English does NOT work until the model is installed."
+                        else -> "NOT DOWNLOADED — English does not work at all until you download it (one model holds every voice below)."
+                    }
                     TitledText(
-                        "Preferred: ${VoiceSettings.PREFERRED_EN_VOICE}",
-                        if (voice.enVoice == VoiceSettings.PREFERRED_EN_VOICE) "In use — the English voice of the 言語島 cards." else "Now using ${voice.enVoice}.",
+                        "Kokoro English model (required)",
+                        note,
                         Modifier.weight(1f),
+                        summaryColor = if (enInstalled) Color(p.accent) else Color(p.errorColor),
+                        summaryBold = !enInstalled,
                     )
-                    Pill("Reselect default", enabled = voice.enVoice != VoiceSettings.PREFERRED_EN_VOICE) {
-                        VoiceSettingsStore.update { it.copy(enVoice = VoiceSettings.PREFERRED_EN_VOICE) }
-                    }
-                }
-            }
-            item {
-                RowScaffold(0, p) {
-                    val (title, note) = when (val s = enState) {
-                        is shiroikuma.onse.english.EnglishStore.State.Installed -> "Kokoro English model" to "installed (${english.model})"
-                        is shiroikuma.onse.english.EnglishStore.State.Downloading -> "Kokoro English model" to "downloading ${s.done * 100 / s.total.coerceAtLeast(1)} %"
-                        is shiroikuma.onse.english.EnglishStore.State.Unpacking -> "Kokoro English model" to "unpacking…"
-                        is shiroikuma.onse.english.EnglishStore.State.Failed -> "Kokoro English model" to "failed: ${s.message}"
-                        else -> "Kokoro English model" to "not downloaded — one model holds every English voice below"
-                    }
-                    TitledText(title, note, Modifier.weight(1f))
                     when (enState) {
                         is shiroikuma.onse.english.EnglishStore.State.Installed -> Pill("Delete") { shiroikuma.onse.english.EnglishStore.delete(context) }
                         is shiroikuma.onse.english.EnglishStore.State.Downloading -> Pill("Stop") { shiroikuma.onse.english.EnglishStore.cancel() }
@@ -215,6 +217,31 @@ fun MainScreen(appVersion: String, onOpenUi: () -> Unit) {
                         else -> Pill("⤓ ${Backup.humanSize(english.size)}") { shiroikuma.onse.english.EnglishStore.download(context) }
                     }
                 }
+            }
+            item {
+                val enInstalled = enState is shiroikuma.onse.english.EnglishStore.State.Installed
+                RowScaffold(0, p) {
+                    TitledText(
+                        "Preferred: ${VoiceSettings.PREFERRED_EN_VOICE}",
+                        when {
+                            !enInstalled -> "Not usable yet — download the Kokoro English model above first."
+                            voice.enVoice == VoiceSettings.PREFERRED_EN_VOICE -> "In use — the English voice of the 言語島 cards."
+                            else -> "Now using ${voice.enVoice}."
+                        },
+                        Modifier.weight(1f),
+                        summaryColor = if (enInstalled) null else Color(p.errorColor),
+                        summaryBold = !enInstalled,
+                    )
+                    Pill("Reselect default", enabled = enInstalled && voice.enVoice != VoiceSettings.PREFERRED_EN_VOICE) {
+                        VoiceSettingsStore.update { it.copy(enVoice = VoiceSettings.PREFERRED_EN_VOICE) }
+                    }
+                }
+            }
+            item {
+                NoteText(
+                    "▶ plays a bundled sample of each voice — it works without the model; speaking your own text and rendering for 言語島 / 暗記 need the model.",
+                    0, p,
+                )
             }
             listOf("US" to true, "US" to false, "UK" to true, "UK" to false).forEach { (accent, female) ->
                 item(key = "en-h-$accent-$female") { SubHeader("$accent ${if (female) "female" else "male"}", p) }

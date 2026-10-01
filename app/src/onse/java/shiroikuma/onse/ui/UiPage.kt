@@ -86,6 +86,7 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
     var eximRefresh by remember { mutableIntStateOf(0) }
     var resetConfirm by remember { mutableStateOf(false) }
     var toast by remember { mutableStateOf<String?>(null) }
+    val enInstalled = remember(eximRefresh) { shiroikuma.onse.english.EnglishStore.isInstalled(context) }
     var automationEnabled by remember { mutableStateOf(AutomationAuth.enabled(context)) }
     var automationRequireToken by remember { mutableStateOf(AutomationAuth.requireToken(context)) }
     var automationToken by remember { mutableStateOf(AutomationAuth.token(context)) }
@@ -245,6 +246,7 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
 
             // ---- English voice ------------------------------------------------------------------
             item { SectionHeader("English voice", p) }
+            // (enInstalled is read below; refreshed on every return to the page)
             item {
                 PreviewCard(0, p) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -252,11 +254,14 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
                             Text("Kokoro — ${voice.enVoice}", color = Color(p.text), fontWeight = FontWeight.Bold, fontFamily = p.family())
                             Text("speed ${pct(voice.enSpeedPct)}", color = Color(p.textSecondary), fontSize = p.labelSizeSp.sp, fontFamily = p.family())
                         }
-                        Pill("▶ Listen") { VoicePlayer.speakEnglish(context, "I worked seven years in Russia, and I still read the news in Russian.") }
+                        Pill("▶ Listen", enabled = enInstalled) { VoicePlayer.speakEnglish(context, "I worked seven years in Russia, and I still read the news in Russian.") }
                     }
                 }
             }
-            item { NoteText("The English voice and its model download are on the main screen.", 0, p) }
+            item {
+                if (enInstalled) NoteText("The English voice and its model download are on the main screen.", 0, p)
+                else NoteText("The Kokoro English model is NOT downloaded — English does not work until it is. Download it on the main screen → English voices.", 0, p, Color(p.errorColor))
+            }
             item {
                 SliderRow(0, p, "English speed", voice.enSpeedPct, pct(voice.enSpeedPct), 50..200, 5) { v ->
                     VoiceSettingsStore.update { it.copy(enSpeedPct = v) }
