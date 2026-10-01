@@ -23,3 +23,6 @@ keystore.properties
 *.keystore
 /.scratch/
 .kotlin/
+
+# fetched by fetchSherpaOnnx
+/shiroikuma/libs/

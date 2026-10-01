@@ -72,7 +72,7 @@ def sha256(path):
 def to_ogg(wav: bytes, out: str):
     subprocess.run(
         ["ffmpeg", "-nostdin", "-loglevel", "error", "-y", "-f", "wav", "-i", "pipe:0",
-         "-ac", "1", "-c:a", "libopus", "-b:a", "20k", "-application", "voip", out],
+         "-ac", "1", "-c:a", "libopus", "-b:a", "48k", "-application", "audio", out],
         input=wav, check=True)
 
 

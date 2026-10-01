@@ -72,6 +72,8 @@ class RenderReceiver : BroadcastReceiver() {
         const val EXTRA_GAP_POST = "gap_post"
         const val EXTRA_BITRATE = "bitrate_kbps"
         const val EXTRA_FORMAT = "format"
+        const val EXTRA_LANG = "lang"
+        const val EXTRA_EN_VOICE = "en_voice"
 
         /**
          * `PING` → `event=pong`: `result` is `OK` (or the gate's `ERROR:`), plus `version`,
@@ -94,6 +96,9 @@ class RenderReceiver : BroadcastReceiver() {
                     putExtra("styles", if (refusal == null) styles else "")
                     putExtra("storage", android.os.Environment.isExternalStorageManager().toString())
                     putExtra("battery_exempt", shiroikuma.onse.ui.isBatteryExempt(context).toString())
+                    putExtra("en_installed", shiroikuma.onse.english.EnglishStore.isInstalled(context).toString())
+                    putExtra("en_voices", if (refusal == null) shiroikuma.onse.english.EnglishCatalog.get(context).voices.joinToString(",") { it.name } else "")
+                    putExtra("en_default", shiroikuma.onse.voice.VoiceSettingsStore.current(context).enVoice)
                 },
             )
         }
