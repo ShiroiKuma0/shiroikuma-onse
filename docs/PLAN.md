@@ -1,69 +1,147 @@
-# shiroikuma-onse — plan
+# shiroikuma-onse — status and handover
 
-Agreed with 白い熊 on 2026-09-29 as Component 1 of the 言語島 (gengoshima) Japanese Language Islands
-suite. The whole suite plan: `~/.claude/plans/cosmic-strolling-bubble.md`.
+Written 2026-10-02, when the 言語島 plan was complete and verified on the phone. Read this before
+working on 音声; `CLAUDE.md` holds the repo rules, `.claude/skills/` the build and upstream-sync recipes.
 
-## Scope
+## What 白い熊 音声 is
 
-A generic VOICEVOX sister app:
+The VOICEVOX app of the 白い熊 family (`shiroikuma.onse`, fork of
+`0266st/VOICEVOX_TTS_Engine_For_Android`, MIT). Four jobs:
 
-- **Base:** fork of `0266st/VOICEVOX_TTS_Engine_For_Android` (MIT). Fold in upstream PR #19 (branch
-  `0266st/core-0.17`): voicevox_core **0.17.0** AAR, VOICEVOX onnxruntime 1.23.2, models fetched by a
-  Gradle task instead of being copied on every launch. When upstream merges it, the rebase drops our copy.
-- **Voice:** VOICEVOX **No.7 / 読み聞かせ, style id 31** — the voice of `shiroikuma-jisho-subtitles`
-  (PC engine 0.25.2, `speedScale` 1.15, `pitchScale` 0, `intonationScale` 1.0, pre/post phoneme 0,
-  0.25 s between sentences). Ship the `.vvm` that holds style 31 (find it in
-  `~/.cache/jisho-subs/vv-engine/`). Credit “VOICEVOX:No.7” on an About screen, per the voice's terms.
-- **Keep the system TTS engine** (`TextToSpeechService`), so doksho and others can use the voice.
-- **Render contract** for other apps — written up as `sister-app-contract-onse-render.md` in
-  `~/git/shiroikuma-jiyusagyoban`, following the existing contracts (automation-v2 token, string
-  extras only, reply by a fresh broadcast, no Binder / PendingIntent / ResultReceiver — EMUI drops them):
-  - request `shiroikuma.onse.action.RENDER`: `request_id`, `reply_package`, `batch_path` (a JSON file
-    of `{id, text, out_path}`), `speaker`, `speed`, `pitch`, `intonation`, `gap_pre`, `gap_post`;
-  - replies `shiroikuma.onse.action.RENDERED` per item: `{request_id, id, status, out_path,
-    duration_ms, error}`, then a final `DONE`;
-  - a `RenderService` foreground service loads the model once and synthesises sequentially;
-  - encode **OGG/Opus** in-app: MediaCodec Opus encoder + `MediaMuxer` `MUXER_OUTPUT_OGG` (API 29+),
-    mono 24 kHz, ~32 kbps; write `<name>.ogg.part` then rename;
-  - all-files access, to write under `/sdcard/〇/[227] 日本語/[227][727] 言語島/`.
-- **Reading control:** callers send text with overridden words already replaced by katakana; later
-  option: expose `createAudioQueryFromKana` for accent-level control.
-- **Sister-app backup hand-off:** the 保存復元 automation contract of `shiroikuma-jiyusagyoban`
-  (`sister-app-contract-backup-automation-hand-off.md`), as in the other sister apps.
+1. **System TTS engine.** Every installed VOICEVOX style is an Android voice (`voice/OnseTtsService`).
+2. **Render service for sister apps.** A batch of sentences in, one OGG/Opus file per sentence out,
+   at exactly the paths the caller names, in Japanese (VOICEVOX) or English (Kokoro-82M).
+   Contract: [`docs/sister-app-contract-onse-render.md`](sister-app-contract-onse-render.md).
+3. **Voice library.** Every VOICEVOX voice can be heard (bundled samples) and downloaded in-app;
+   English voices likewise.
+4. **A 白い熊 house app.** Main screen, 白い熊 音声 UI page, Export / Import, 保存復元 automation.
 
-## Step order (白い熊, 2026-09-29)
+It owns no naming or layout of anyone's files: callers decide every path.
 
-1. ✅ Repo, remotes, branches, fork layer, keystore, skills — committed and pushed.
-2. ✅ Our black-yellow traced icon: PNG previews of ours and the original in `~/tmp` → 白い熊 confirms.
-3. ✅ De-branding: remove the upstream name, GitHub links and branding everywhere (all pages, Help …),
-   put in 白い熊 音声, our GitHub link and our icon wherever an icon shows.
-4. ✅ First build, then push.
-5. ✅ Bring the UI in line with the sister repos (study `shiroikuma-denwa`, `shiroikuma-messeji`, …) and
-   build the **白い熊 音声 UI** page (below).
-6. ✅ The render contract and OGG encoding (`docs/sister-app-contract-onse-render.md`); core 0.17, No.7 bundled, every voice downloadable with bundled samples.
-7. ✅ The backup-automation hand-off from `shiroikuma-jiyusagyoban` (contract v2, `app/src/onse/java/shiroikuma/onse/automation/`). Still open on jiyusagyoban's side: `shiroikuma.onse` in its `<queries>` and a 「保存 ⇨ shiroikuma.onse」 roster task.
+## Its place in 言語島 (gengoshima)
+
+言語島 is 白い熊's Japanese Language Islands suite (Mikel Hyperpolyglot's method). The suite-level
+design record — architecture across the four apps, decisions, settings, file layout, contracts,
+verification — is **`~/git/shiroikuma-jiyusagyoban/docs/gengoshima.md`** (the original plan file,
+`~/.claude/plans/cosmic-strolling-bubble.md`, is outside every repo; that document supersedes it).
+
+| App | Role in 言語島 |
+| --- | --- |
+| 白い熊 自由作業盤 (`shiroikuma-jiyusagyoban`) | the suite: sentence entry, Claude translation, island editor, the car player, statistics, the [227][01] settings, the 暗記 sync client |
+| **白い熊 音声 (this repo)** | renders every sentence twice: Japanese No.7 / 読み聞かせ (style 31, speed 1.15) and English Kokoro **am_michael**, OGG/Opus 48 kbps |
+| 白い熊 暗記 (`shiroikuma-anki`) | the `islands.list` / `islands.sync` door — contract `docs/sister-app-contract-anki-islands.md` in that repo; decks `言語島々::認識::<island>` / `言語島々::製作::<island>` |
+| 白い熊の辞書 (`shiroikuma-jisho`) | `STUDY_AUDIO`: study one island's `000 島全体.ogg/.srt` with tap-to-look-up |
+
+## Status — everything planned is done (2026-10-02)
+
+All committed and pushed on `custom`; the phone runs `1.0+009`.
+
+| Step | Where |
+| --- | --- |
+| Fork setup, keystore, skills, icon, de-branding | `shiroikuma/`, `.claude/skills/`, `app/src/onse/res` |
+| VOICEVOX CORE 0.17 (upstream PR #19 folded in as one commit) | commit `4406201` |
+| Every VOICEVOX voice: No.7 bundled, 27 models downloadable, 217 bundled samples | `voice/`, `assets/voices/` |
+| Main screen + 白い熊 音声 UI (kxkb page format, Export / Import) | `MainScreen.kt`, `ui/` |
+| 保存復元 automation, contract v2 | `automation/` |
+| Render service + OGG/Opus encoding | `render/` |
+| PING, `WarmActivity`, all-files + battery-exemption checks on entry | `render/RenderReceiver.kt`, `WarmActivity.kt`, `ui/StorageAccessGate.kt` |
+| English: Kokoro-82M via sherpa-onnx, 28 voices, default am_michael | `english/English.kt` |
+| 48 kbps samples and renders; clear "model not downloaded" warnings | — |
+
+**Verified on the Mate XT:**
+- **Japanese render:** 3 sentences gave valid mono OGG/Opus files. Warm, the first file arrives at
+  about 1.5 s and 3 sentences take about 11 s; cold (with the battery exemption), about 13 s.
+- **English render:** 3 sentences, am_michael, about 58 kbps. The first file took about 10 s, which
+  includes loading the model; after that about 5–8 s per sentence (Kokoro runs at roughly half
+  real-time speed on the phone).
+- **言語島 end to end:**
+  - English and Japanese audio for all 157 sentences.
+  - The adoption of 白い熊's 150 hand-made cards: original note IDs kept, 46 misfiled cards fixed,
+    review history present.
+  - Add / edit (due date kept) / delete / rename / no orphan media — all passed (白い熊, 2026-10-02).
+  - The Recall player with English audio — passed.
+
+## Device facts that cost something to learn
+
+- **EMUI drops a cold background start of 音声** — an `am broadcast` or a sister app's
+  `startForegroundService` while 音声 is not running — unless 音声 is **exempt from battery
+  optimisation**. On top of that, 白い熊 sets Settings → Battery → App launch → 白い熊 音声 to manual,
+  with auto-launch, secondary launch and run in background all on. A temporary allowlist grant is
+  not enough.
+  - 音声 now checks and requests the exemption on every entry.
+  - Callers wake 音声 first: the data door's `describe` call (about 70 ms, works cold) or
+    `WarmActivity`, then `PING`, then `RENDER`.
+- **The cold path cannot be tested from adb on this phone.** Warm the app, then test.
+- **Opus at 20 kbps in "voip" mode audibly dulls speech.** 白い熊 heard it at once. Samples and
+  renders are 48 kbps, general-audio mode.
+- **Two ONNX runtimes coexist:**
+  - VOICEVOX's is `libvoicevox_onnxruntime.so`, with versioned symbols.
+  - sherpa-onnx comes as its **static-link** AAR, so ONNX Runtime sits inside `libsherpa-onnx-jni.so`
+    and no `libonnxruntime.so` is packaged.
+- **A missing model must be shouted.** Before the Kokoro model was downloaded, the UI read
+  "Preferred: am_michael" as if English worked (白い熊, 2026-10-01). Every English surface now says
+  in red that English does not work until the model is downloaded.
+
+## How the voice assets are made (PC)
+
+Inputs are cached in the gitignored `.scratch/`: the venv with `voicevox_core` 0.17 + `sherpa-onnx`,
+the VOICEVOX ONNX Runtime, the `vvm-0.17.0/` models and the Kokoro model in `en/`. Outputs are committed.
+
+- `.scratch/venv/bin/python shiroikuma/voices/gen-voices.py` writes `assets/voices/catalog.json` and
+  `assets/voices/samples/<style>.ogg`. It reads the voicevox_vvm release in `RELEASE`. The 0.17
+  speech styles are `streaming_talk`; in the singing model, `sing` is the teacher and `frame_decode`
+  are the voices.
+- `.scratch/venv/bin/python shiroikuma/voices/gen-english.py` writes `assets/voices/english.json`
+  and `assets/voices/english/<voice>.ogg`. It uses Kokoro `kokoro-int8-multi-lang-v1_0`, whose
+  speaker IDs are the documented v1.0 ones.
+- `fetchOnseModel` puts `6.vvm` into the APK. `fetchSherpaOnnx` fetches the pinned sherpa-onnx AAR.
+  Both are SHA-256 checked and run before every build.
+
+## Contracts 音声 implements
+
+| Contract | Document | Code |
+| --- | --- | --- |
+| Render (`RENDER`, `CANCEL_RENDER`, `PING`, `WarmActivity`) | `docs/sister-app-contract-onse-render.md` | `render/`, `WarmActivity.kt` |
+| 保存復元 automation v2 (`EXPORT_STATE` …, data door `shiroikuma.onse.automation`) | `~/git/shiroikuma-jiyusagyoban/sister-app-contract-backup-automation-hand-off.md` | `automation/` |
+
+## Open items
+
+- **The 保存復元 roster:** jiyusagyoban has `shiroikuma.onse` in its `<queries>`, but there is no
+  「保存 ⇨ shiroikuma.onse」 roster task yet, so 音声 is not in the batch backup. That is jiyusagyoban's work.
+- **No GitHub release yet.** Every build so far was delivered by adb only. `/publish-version` would
+  cut the first release with the merged `CHANGELOG.md`.
+- **Upstream PR #19** is still open. When upstream merges it, `/upstream-new-version` should see
+  our fold-in commit go empty.
+- **Possible later work (not asked for):** offer English through the system TTS service; expose
+  `createAudioQueryFromKana` for accent-level control.
 
 ## The 白い熊 音声 UI page — 白い熊's requirements (2026-09-29)
 
-- Name **白い熊 音声 UI**; a **long-press on the Settings cog** of the main screen opens it directly.
-- Holds as configurable items **all our changes and modifiable configs** (details to follow from 白い熊).
-- Built like the sister repos: logical sectioning; **each category a bold, big, underlined heading**
-  (underline only as wide as the text), items **significantly indented**, each sub-level further
-  indented; thin spacers between sections; **tight lines, no big padding** — padding only between
-  top-level groups. Same look for headings, sizes and separators as the **kxkb UI page**.
-- Apparent UI options: colours, fonts, etc. **Black-yellow default** for almost everything (black
-  background, yellow text, yellow border), all of it settable, grouped logically.
+- Name **白い熊 音声 UI**. A **tap or long-press on the Settings cog** of the main screen opens it
+  (白い熊 later asked for tap = long-press).
+- It holds as configurable items **all our changes and modifiable configs**.
+- **Layout, as in the sister repos:**
+  - logical sections, **each category a bold, big, underlined heading** (the underline only as wide
+    as the text);
+  - items **significantly indented**, each sub-level further indented;
+  - thin spacers between sections, **tight lines, no big padding**; padding only between top-level
+    groups;
+  - the same headings, sizes and separators as the **kxkb UI page**.
+- **Black-yellow default** for almost everything (black background, yellow text, yellow border), all
+  of it settable and grouped logically.
 - **Colour selectors:** four RGBA sliders with a preview, and above them one-click boxes pre-filled
   with previously selected colours.
-- **External fonts** like the sister repos; font choices render **in their own glyphs**.
-- **All size selectors are sliders** (font size, weight, roundness …); borders and the like go down
-  to 0. **Everything previews live** (text, icon, border thickness, size, colour).
-- **Export/Import is the first section at the top**, as in the Kōjiki UI page (same idea and flow):
-  a settable directory, queried on opening the page for the latest export; every settable item
-  organised and split logically. Backup file names follow the family rule `shiroikuma-onse_<yyyy-MM-dd_HH-mm-ss>.zip`.
-- **Button line like ArcaneChat's:** round pills, Cancel alone on the left, Import and Export on the right.
-- **Directory unset → red** message (on the page too); set → yellow.
-- **Success:** a black-yellow OK dialog with a **yellow border**. After Export, OK closes the dialog,
-  the Export/Import panel beneath it and the UI page. After Import, acknowledging (“Later”, or
-  “Restart now”, which restarts the app) closes the whole chain the same way.
-- **Failures** (“Export failed…”, “No categories selected.”) leave the panel open.
+- **External fonts** as in the sister repos; font choices render **in their own glyphs**.
+- **Sizes:** every size selector is a slider; borders and the like go down to 0. **Everything
+  previews live.**
+- **Export / Import is the first section**, as in the Kōjiki UI page:
+  - a settable directory, queried on opening the page for the latest export;
+  - backup names `shiroikuma-onse_<yyyy-MM-dd_HH-mm-ss>.zip`;
+  - a button line like ArcaneChat's: round pills, Cancel alone on the left, Import and Export on the right;
+  - an unset directory is shown in red, a set one in yellow.
+- **Dialogs:**
+  - Success is a black-yellow OK dialog with a **yellow border**.
+  - After Export, OK closes the dialog, the panel and the UI page.
+  - After Import, "Later" or "Restart now" closes the whole chain.
+  - Failures leave the panel open.
+- **On every entry** the app checks all-files access and the battery exemption, and asks for them.

@@ -10,13 +10,26 @@ a generic render service other sister apps drive by intent — first of all the 
 Japanese Language Islands suite** in `~/git/shiroikuma-jiyusagyoban` (project 日本語 [227]), which asks
 this app to render each sentence to OGG/Opus at a path it names. It stays a system TTS voice too.
 
-The agreed design and the backlog live in **`docs/PLAN.md`** — read it first.
+**Status and handover: `docs/PLAN.md`** — read it first (what 音声 does, its role in 言語島, what is
+done and verified, device facts learned the hard way, how the voice assets are generated, open items).
 
 ## Read this first
 
 - **`docs/PLAN.md`** — scope, the render contract, the UI-page requirements, the step order.
 - **`.claude/skills/build-apk/SKILL.md`** — identity, the build, signing, versioning.
 - **`.claude/skills/upstream-new-version/SKILL.md`** — the proceed-gated upstream sync.
+
+## Current status (2026-10-02)
+
+Everything planned is built, verified on the Mate XT and pushed; the phone runs `1.0+009`.
+- Japanese: every VOICEVOX voice (No.7 / 読み聞かせ bundled, the rest downloadable, bundled samples).
+- English: Kokoro-82M via sherpa-onnx (28 voices, default **am_michael**, model downloaded in-app).
+- Render service for sister apps (`docs/sister-app-contract-onse-render.md`) — 言語島 in
+  自由作業盤 renders all its Japanese and English audio here; 白い熊 暗記 gets those files through
+  jiyusagyoban's sync. Suite design record: `~/git/shiroikuma-jiyusagyoban/docs/gengoshima.md`.
+- 白い熊 音声 UI, Export / Import, 保存復元 automation v2, PING / WarmActivity, the all-files and
+  battery-exemption checks on every entry (EMUI refuses cold background starts without the exemption).
+- Open: no GitHub release published yet; jiyusagyoban's 保存復元 roster task for 音声 not yet made.
 
 ## Branch & remote model (same as the sister forks)
 
@@ -38,7 +51,7 @@ The agreed design and the backlog live in **`docs/PLAN.md`** — read it first.
 | What | Value | Where |
 | --- | --- | --- |
 | applicationId | `shiroikuma.onse` | `shiroikuma/fork.gradle` → flavour `onse` |
-| App label | `白い熊 音声` | flavour resources in `app/src/onse/res` (de-branding step) |
+| App label | `白い熊 音声` | `app/src/onse/res/values/strings_onse.xml` + flavour manifest overlay |
 | Our settings page | **`白い熊 音声 UI`** — every configurable item of the fork; opened by a **tap or long-press on the Settings cog** of the main screen | `app/src/onse/java/shiroikuma/onse/ui/UiPage.kt` |
 | Flavour | `onse` — arm64-v8a only | `shiroikuma/fork.gradle` |
 | Launcher icon | upstream robot head traced as yellow line-art on black, sound arcs, 音 | `shiroikuma/icon/trace-icon.py` → `onse-icon.svg` → `gen-icons.py` into `app/src/onse/res` |
