@@ -60,23 +60,19 @@ import kotlinx.coroutines.withContext
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import shiroikuma.onse.automation.AutomationAuth
-import shiroikuma.onse.voice.VoiceCatalog
-import shiroikuma.onse.voice.VoicePlayer
-import shiroikuma.onse.voice.VoiceSettings
-import shiroikuma.onse.voice.VoiceSettingsStore
 import java.io.File
 
 /**
  * 白い熊 音声 UI — every configurable item of the fork, on one page in the kxkb UI-page format:
- * Export / Import first, then Voice, Colours, Typography, Borders & shape, Main screen, Settings
- * page, Reset. Every change applies live and every group carries a preview of what it controls.
+ * Export / Import first, then Colours, Typography, Borders & shape, Main screen, Settings
+ * page, Reset. (The voices and their settings live on the main screen, per language — 白い熊,
+ * 2026-10-12.) Every change applies live and every group carries a preview of what it controls.
  */
 @Composable
 fun UiPage(appVersion: String, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val p by UiStore.prefs.collectAsState()
-    val voice by VoiceSettingsStore.settings.collectAsState()
 
     var colorTarget by remember { mutableStateOf<ColorTarget?>(null) }
     var fontPicker by remember { mutableStateOf(false) }
@@ -86,7 +82,6 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
     var eximRefresh by remember { mutableIntStateOf(0) }
     var resetConfirm by remember { mutableStateOf(false) }
     var toast by remember { mutableStateOf<String?>(null) }
-    val enInstalled = remember(eximRefresh) { shiroikuma.onse.english.EnglishStore.isInstalled(context) }
     var automationEnabled by remember { mutableStateOf(AutomationAuth.enabled(context)) }
     var automationRequireToken by remember { mutableStateOf(AutomationAuth.requireToken(context)) }
     var automationToken by remember { mutableStateOf(AutomationAuth.token(context)) }
@@ -176,95 +171,6 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
                             color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 14.sp,
                         )
                     }
-                }
-            }
-
-            // ---- Voice -------------------------------------------------------------------------
-            item { SectionHeader("Voice", p) }
-            item {
-                val label = VoiceCatalog.get(context).choiceFor(voice.styleId)?.label ?: "—"
-                PreviewCard(0, p) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text(label, color = Color(p.text), fontWeight = FontWeight.Bold, fontFamily = p.family())
-                            Text(
-                                "speed ${pct(voice.speedPct)} · pitch ${signed(voice.pitchPct)} · intonation ${pct(voice.intonationPct)}",
-                                color = Color(p.textSecondary), fontSize = p.labelSizeSp.sp, fontFamily = p.family(),
-                            )
-                        }
-                        Pill("▶ Listen") { VoicePlayer.speak(context, VoiceCatalog.get(context).sampleText, voice.styleId) }
-                    }
-                }
-            }
-            item { NoteText("The voice itself is chosen on the main screen, where every VOICEVOX voice can be heard and downloaded.", 0, p) }
-            item {
-                SliderRow(0, p, "Speed", voice.speedPct, pct(voice.speedPct), 50..200, 5) { v ->
-                    VoiceSettingsStore.update { it.copy(speedPct = v) }
-                }
-            }
-            item {
-                SliderRow(0, p, "Pitch", voice.pitchPct, signed(voice.pitchPct), -15..15) { v ->
-                    VoiceSettingsStore.update { it.copy(pitchPct = v) }
-                }
-            }
-            item {
-                SliderRow(0, p, "Intonation", voice.intonationPct, pct(voice.intonationPct), 0..200, 5) { v ->
-                    VoiceSettingsStore.update { it.copy(intonationPct = v) }
-                }
-            }
-            item {
-                SliderRow(0, p, "Volume", voice.volumePct, pct(voice.volumePct), 0..200, 5) { v ->
-                    VoiceSettingsStore.update { it.copy(volumePct = v) }
-                }
-            }
-            item { SubHeader("Pauses", p) }
-            item {
-                SliderRow(1, p, "Before speaking", voice.prePauseMs, ms(voice.prePauseMs), 0..1000, 10) { v ->
-                    VoiceSettingsStore.update { it.copy(prePauseMs = v) }
-                }
-            }
-            item {
-                SliderRow(1, p, "After speaking", voice.postPauseMs, ms(voice.postPauseMs), 0..1000, 10) { v ->
-                    VoiceSettingsStore.update { it.copy(postPauseMs = v) }
-                }
-            }
-            item {
-                SwitchRow(
-                    0, p, "Follow the calling app's speech rate",
-                    "Apps reading through Android's text-to-speech can speed up or slow down on top of the speed above.",
-                    voice.followSystemRate,
-                ) { v -> VoiceSettingsStore.update { it.copy(followSystemRate = v) } }
-            }
-            item {
-                RowScaffold(0, p, onClick = {
-                    VoiceSettingsStore.update { VoiceSettings(styleId = it.styleId, enVoice = it.enVoice, enSpeedPct = it.enSpeedPct) }
-                    toast = "Voice knobs back to the 白い熊 defaults"
-                }) {
-                    TitledText("Restore the 白い熊 voice defaults", "Speed 115 %, pitch 0, intonation 100 %, volume 100 %, pauses 100 ms.", Modifier.weight(1f))
-                }
-            }
-
-            // ---- English voice ------------------------------------------------------------------
-            item { SectionHeader("English voice", p) }
-            // (enInstalled is read below; refreshed on every return to the page)
-            item {
-                PreviewCard(0, p) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text("Kokoro — ${voice.enVoice}", color = Color(p.text), fontWeight = FontWeight.Bold, fontFamily = p.family())
-                            Text("speed ${pct(voice.enSpeedPct)}", color = Color(p.textSecondary), fontSize = p.labelSizeSp.sp, fontFamily = p.family())
-                        }
-                        Pill("▶ Listen", enabled = enInstalled) { VoicePlayer.speakEnglish(context, "I worked seven years in Russia, and I still read the news in Russian.") }
-                    }
-                }
-            }
-            item {
-                if (enInstalled) NoteText("The English voice and its model download are on the main screen.", 0, p)
-                else NoteText("The Kokoro English model is NOT downloaded — English does not work until it is. Download it on the main screen → English voices.", 0, p, Color(p.errorColor))
-            }
-            item {
-                SliderRow(0, p, "English speed", voice.enSpeedPct, pct(voice.enSpeedPct), 50..200, 5) { v ->
-                    VoiceSettingsStore.update { it.copy(enSpeedPct = v) }
                 }
             }
 
@@ -485,9 +391,6 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
     }
 }
 
-private fun pct(v: Int) = "$v %"
-private fun signed(v: Int) = if (v > 0) "+${v / 100.0}" else "${v / 100.0}"
-private fun ms(v: Int) = "$v ms"
 private fun dp(v: Int) = if (v == 0) "Off (0 dp)" else "$v dp"
 private fun tenths(v: Int) = if (v == 0) "Off (0 dp)" else "${v / 10.0} dp"
 

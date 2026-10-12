@@ -52,12 +52,16 @@ object VoiceStore {
         if (pending.isNotEmpty()) {
             val stillMissing = catalog.models.filter { it.file in pending && !isInstalled(context, it) }
             val english = shiroikuma.onse.ui.Backup.ENGLISH_MARKER in pending && !shiroikuma.onse.english.EnglishStore.isInstalled(context)
+            val czech = shiroikuma.onse.ui.Backup.czechVoicesIn(context, pending).filter { !shiroikuma.onse.czech.CzechStore.isInstalled(context, it) }
             shiroikuma.onse.ui.Backup.setPendingVoices(
                 context,
-                stillMissing.map { it.file }.toSet() + (if (english) setOf(shiroikuma.onse.ui.Backup.ENGLISH_MARKER) else emptySet()),
+                stillMissing.map { it.file }.toSet() +
+                    (if (english) setOf(shiroikuma.onse.ui.Backup.ENGLISH_MARKER) else emptySet()) +
+                    czech.map { shiroikuma.onse.ui.Backup.CZECH_PREFIX + it.name },
             )
             stillMissing.forEach { download(context, it) }
             if (english) shiroikuma.onse.english.EnglishStore.download(context)
+            czech.forEach { shiroikuma.onse.czech.CzechStore.download(context, it) }
         }
         _states.value = catalog.models.associate { m ->
             m.file to (_states.value[m.file]?.takeIf { it is State.Downloading }

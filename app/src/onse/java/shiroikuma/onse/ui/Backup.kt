@@ -44,6 +44,14 @@ object Backup {
     private const val KEY_PENDING_VOICES = "pending_voices"
     /** The English (Kokoro) model's entry in the installed-voices list. */
     const val ENGLISH_MARKER = "english:kokoro"
+    /** A Czech (Piper) voice's entry in the installed-voices list: `czech:<voice>`. */
+    const val CZECH_PREFIX = "czech:"
+
+    /** The Czech voices an installed-voices list names (`czech:piper`, 1.0+010's single marker, is jirka). */
+    fun czechVoicesIn(context: Context, entries: Collection<String>): List<shiroikuma.onse.czech.CzechVoice> {
+        val names = entries.filter { it.startsWith(CZECH_PREFIX) }.map { it.removePrefix(CZECH_PREFIX).let { n -> if (n == "piper") "jirka" else n } }
+        return shiroikuma.onse.czech.CzechCatalog.get(context).voices.filter { it.name in names }
+    }
 
     /** The last line of the data door's `contains` header. */
     const val CONTAINS_NO_MODELS = "Voice models are NOT included — the installed ones are re-downloaded when the app next opens"
@@ -192,7 +200,8 @@ object Backup {
             Cat.VOICES -> {
                 val installed = VoiceCatalog.get(context).models
                     .filter { !it.bundled && VoiceStore.isInstalled(context, it) }.map { it.file } +
-                    (if (shiroikuma.onse.english.EnglishStore.isInstalled(context)) listOf(ENGLISH_MARKER) else emptyList())
+                    (if (shiroikuma.onse.english.EnglishStore.isInstalled(context)) listOf(ENGLISH_MARKER) else emptyList()) +
+                    shiroikuma.onse.czech.CzechStore.installedVoices(context).map { CZECH_PREFIX + it.name }
                 entry("voices.json", JSONObject().put("installed", JSONArray(installed)).toString(1).toByteArray())
             }
         }
@@ -253,12 +262,19 @@ object Backup {
                             val catalog = VoiceCatalog.get(context)
                             val missing = catalog.models.filter { it.file in wanted && !VoiceStore.isInstalled(context, it) }
                             val englishMissing = ENGLISH_MARKER in wanted && !shiroikuma.onse.english.EnglishStore.isInstalled(context)
+                            val czechMissing = czechVoicesIn(context, wanted).filter { !shiroikuma.onse.czech.CzechStore.isInstalled(context, it) }
                             // Recorded durably first: an automated restore is force-stopped the
                             // moment it replies, so the downloads resume on the next app start.
-                            setPendingVoices(context, missing.map { it.file }.toSet() + (if (englishMissing) setOf(ENGLISH_MARKER) else emptySet()))
+                            setPendingVoices(
+                                context,
+                                missing.map { it.file }.toSet() +
+                                    (if (englishMissing) setOf(ENGLISH_MARKER) else emptySet()) +
+                                    czechMissing.map { CZECH_PREFIX + it.name },
+                            )
                             missing.forEach { VoiceStore.download(context, it) }
                             if (englishMissing) shiroikuma.onse.english.EnglishStore.download(context)
-                            lines += "Installed voices: ${wanted.size} listed, ${missing.size + (if (englishMissing) 1 else 0)} to download"
+                            czechMissing.forEach { shiroikuma.onse.czech.CzechStore.download(context, it) }
+                            lines += "Installed voices: ${wanted.size} listed, ${missing.size + (if (englishMissing) 1 else 0) + czechMissing.size} to download"
                         }
                     }
                 }

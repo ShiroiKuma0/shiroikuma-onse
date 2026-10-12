@@ -94,10 +94,9 @@ class RenderService : Service() {
             }
             val items = JSONObject(File(r.batchPath).readText()).getJSONArray("items")
             total = items.length()
-            val english = params.getStringExtra(RenderReceiver.EXTRA_LANG).equals("en", true)
-            if (english) {
-                renderEnglish(r, items, total).let { (o, f) -> ok = o; failed = f }
-                return
+            when (params.getStringExtra(RenderReceiver.EXTRA_LANG)?.lowercase()) {
+                "en" -> { renderEnglish(r, items, total).let { (o, f) -> ok = o; failed = f }; return }
+                "cs" -> { renderCzech(r, items, total).let { (o, f) -> ok = o; failed = f }; return }
             }
             val catalog = VoiceCatalog.get(app)
             val style = params.getStringExtra(RenderReceiver.EXTRA_SPEAKER)?.toIntOrNull() ?: VoiceSettings.PREFERRED_STYLE
@@ -161,16 +160,60 @@ class RenderService : Service() {
      */
     private fun renderEnglish(r: Request, items: org.json.JSONArray, total: Int): Pair<Int, Int> {
         val app = applicationContext
-        val params = r.params
         val settings = shiroikuma.onse.voice.VoiceSettingsStore.current(app)
-        val voice = params.getStringExtra(RenderReceiver.EXTRA_EN_VOICE)?.takeIf { it.isNotBlank() } ?: settings.enVoice
-        val speed = params.getStringExtra(RenderReceiver.EXTRA_SPEED)?.toFloatOrNull() ?: (settings.enSpeedPct / 100f)
-        if (!shiroikuma.onse.english.EnglishStore.isInstalled(app)) {
-            RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:english model not installed")
-            return 0 to 0
-        }
-        if (shiroikuma.onse.english.EnglishCatalog.get(app).voice(voice) == null) {
-            RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:unknown english voice: $voice")
+        val voice = r.params.getStringExtra(RenderReceiver.EXTRA_EN_VOICE)?.takeIf { it.isNotBlank() } ?: settings.enVoice
+        return renderPcm(
+            r, items, total, "English",
+            refusal = when {
+                !shiroikuma.onse.english.EnglishStore.isInstalled(app) -> "english model not installed"
+                shiroikuma.onse.english.EnglishCatalog.get(app).voice(voice) == null -> "unknown english voice: $voice"
+                else -> null
+            },
+            speed = r.params.getStringExtra(RenderReceiver.EXTRA_SPEED)?.toFloatOrNull() ?: (settings.enSpeedPct / 100f),
+            rate = shiroikuma.onse.english.EnglishEngine.SAMPLE_RATE,
+        ) { text, speed -> shiroikuma.onse.english.EnglishEngine.synthesizePcm(app, text, voice, speed) }
+    }
+
+    /**
+     * `lang=cs`: Piper Czech. `cs_voice` (default the app's Czech voice, jirka) and `speed`
+     * (default the app's Czech speed). Same files, replies and `done` as Japanese.
+     * Returns (ok, failed).
+     */
+    private fun renderCzech(r: Request, items: org.json.JSONArray, total: Int): Pair<Int, Int> {
+        val app = applicationContext
+        val settings = shiroikuma.onse.voice.VoiceSettingsStore.current(app)
+        val voice = r.params.getStringExtra(RenderReceiver.EXTRA_CS_VOICE)?.takeIf { it.isNotBlank() } ?: settings.csVoice
+        return renderPcm(
+            r, items, total, "Čeština",
+            refusal = when {
+                shiroikuma.onse.czech.CzechCatalog.get(app).voice(voice) == null -> "unknown czech voice: $voice"
+                !shiroikuma.onse.czech.CzechStore.isInstalled(app, voice) -> "czech model not installed"
+                else -> null
+            },
+            speed = r.params.getStringExtra(RenderReceiver.EXTRA_SPEED)?.toFloatOrNull() ?: (settings.csSpeedPct / 100f),
+            rate = shiroikuma.onse.czech.CzechEngine.SAMPLE_RATE,
+        ) { text, speed -> shiroikuma.onse.czech.CzechEngine.synthesizePcm(app, text, voice, speed) }
+    }
+
+    /**
+     * The batch loop of the sherpa-onnx languages: [refusal] (if any) answers the whole request,
+     * otherwise each item is synthesised to 16-bit mono PCM at [rate] and written as OGG/Opus (or
+     * WAV). Returns (ok, failed).
+     */
+    private fun renderPcm(
+        r: Request,
+        items: org.json.JSONArray,
+        total: Int,
+        label: String,
+        refusal: String?,
+        speed: Float,
+        rate: Int,
+        synth: (String, Float) -> ByteArray,
+    ): Pair<Int, Int> {
+        val app = applicationContext
+        val params = r.params
+        if (refusal != null) {
+            RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:$refusal")
             return 0 to 0
         }
         val wantWav = params.getStringExtra(RenderReceiver.EXTRA_FORMAT).equals("wav", true)
@@ -189,18 +232,17 @@ class RenderService : Service() {
             val item = items.getJSONObject(i)
             val id = item.optString("id")
             val outPath = item.optString("out_path")
-            updateNotification("English ${i + 1}/$total")
+            updateNotification("$label ${i + 1}/$total")
             try {
                 require(outPath.startsWith("/")) { "out_path must be absolute" }
-                val pcm = shiroikuma.onse.english.EnglishEngine.synthesizePcm(app, item.getString("text"), voice, speed)
-                val rate = shiroikuma.onse.english.EnglishEngine.SAMPLE_RATE
-                if (wantWav) OggOpusWriter.writeWav(shiroikuma.onse.english.EnglishEngine.wav(pcm), File(outPath))
+                val pcm = synth(item.getString("text"), speed)
+                if (wantWav) OggOpusWriter.writeWav(shiroikuma.onse.english.EnglishEngine.wav(pcm, rate), File(outPath))
                 else OggOpusWriter.write(pcm, rate, bitrate, File(outPath))
                 ok++
                 RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, pcm.size / 2L * 1000 / rate, null, i + 1, total)
             } catch (e: Exception) {
                 failed++
-                Log.w(TAG, "english item $id failed", e)
+                Log.w(TAG, "$label item $id failed", e)
                 RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, false, outPath, 0, e.message ?: e.javaClass.simpleName, i + 1, total)
             }
         }

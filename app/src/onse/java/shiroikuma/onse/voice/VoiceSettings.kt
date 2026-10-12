@@ -26,12 +26,16 @@ data class VoiceSettings(
     /** English (Kokoro) voice and speed — default am_michael (白い熊, 2026-10-01). */
     val enVoice: String = PREFERRED_EN_VOICE,
     val enSpeedPct: Int = 100,
+    /** Czech (Piper) voice and speed — jirka, the only Piper cs_CZ voice (2026-10-11). */
+    val csVoice: String = PREFERRED_CS_VOICE,
+    val csSpeedPct: Int = 100,
 ) {
     companion object {
         /** No.7 / 読み聞かせ — the 白い熊 voice. */
         const val PREFERRED_STYLE = 31
         const val PREFERRED_LABEL = "No.7（読み聞かせ）"
         const val PREFERRED_EN_VOICE = "am_michael"
+        const val PREFERRED_CS_VOICE = "jirka"
     }
 }
 
@@ -80,6 +84,8 @@ object VoiceSettingsStore {
             followSystemRate = p.getBoolean("followSystemRate", d.followSystemRate),
             enVoice = p.getString("enVoice", d.enVoice) ?: d.enVoice,
             enSpeedPct = p.getInt("enSpeedPct", d.enSpeedPct),
+            csVoice = p.getString("csVoice", d.csVoice) ?: d.csVoice,
+            csSpeedPct = p.getInt("csSpeedPct", d.csSpeedPct),
         )
     }
 
@@ -95,6 +101,8 @@ object VoiceSettingsStore {
             .putBoolean("followSystemRate", v.followSystemRate)
             .putString("enVoice", v.enVoice)
             .putInt("enSpeedPct", v.enSpeedPct)
+            .putString("csVoice", v.csVoice)
+            .putInt("csSpeedPct", v.csSpeedPct)
             .commit() // the TTS service reads this file from its own process start
     }
 }

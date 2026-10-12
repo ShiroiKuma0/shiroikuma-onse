@@ -185,7 +185,9 @@ fun SliderRow(
 ) {
     Column(Modifier.fillMaxWidth().padding(start = rowIndent(level, p), end = 16.dp, top = 2.dp, bottom = 0.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+            // Coloured explicitly: the main screen has no Surface, so the default content colour
+            // there is black on black (白い熊, 2026-10-12).
+            Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge, color = Color(p.text), fontFamily = p.family())
             Text(
                 valueText,
                 Modifier.width(IntrinsicSize.Max).padding(start = 8.dp),

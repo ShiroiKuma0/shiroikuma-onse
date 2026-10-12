@@ -1,0 +1,35 @@
+{
+ "defaultVoice": "jirka",
+ "sampleText": "Dobrý den. Toto je ukázka mého českého hlasu.",
+ "keep": [
+  "tokens.txt",
+  "espeak-ng-data/",
+  "MODEL_CARD"
+ ],
+ "voices": [
+  {
+   "name": "jirka",
+   "female": false,
+   "license": "dataset CC0",
+   "sample": "czech/jirka.ogg",
+   "model": "vits-piper-cs_CZ-jirka-medium",
+   "onnx": "cs_CZ-jirka-medium.onnx",
+   "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-cs_CZ-jirka-medium.tar.bz2",
+   "size": 67212775,
+   "sha256": "321aafd83dd89b3d5b2c36c5898e0710d4f472f3c191cb7f73901a89b7f8539f",
+   "sampleRate": 22050
+  },
+  {
+   "name": "kasandra",
+   "female": true,
+   "license": "dataset CC BY 4.0, Ondřej Šimek",
+   "sample": "czech/kasandra.ogg",
+   "model": "vits-piper-cs_CZ-kasandra-medium",
+   "onnx": "cs_CZ-kasandra-medium.onnx",
+   "url": "https://github.com/ShiroiKuma0/shiroikuma-onse/releases/download/voices/vits-piper-cs_CZ-kasandra-medium.tar.bz2",
+   "size": 67224638,
+   "sha256": "0c7bd873b02bd6e1f8d3070f07b48807080a4ac00290dfd66d1dba1472415ad8",
+   "sampleRate": 22050
+  }
+ ]
+}

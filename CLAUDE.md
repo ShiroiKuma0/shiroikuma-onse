@@ -24,6 +24,8 @@ done and verified, device facts learned the hard way, how the voice assets are g
 Everything planned is built, verified on the Mate XT and pushed; the phone runs `1.0+009`.
 - Japanese: every VOICEVOX voice (No.7 / 読み聞かせ bundled, the rest downloadable, bundled samples).
 - English: Kokoro-82M via sherpa-onnx (28 voices, default **am_michael**, model downloaded in-app).
+- Czech (2026-10-11/12): Piper cs_CZ **jirka** and **kasandra** via sherpa-onnx (`lang=cs`), one model per
+  voice downloaded in-app; kasandra is converted by us and hosted on the GitHub release **`voices`**.
 - Render service for sister apps (`docs/sister-app-contract-onse-render.md`) — 言語島 in
   自由作業盤 renders all its Japanese and English audio here; 白い熊 暗記 gets those files through
   jiyusagyoban's sync. Suite design record: `~/git/shiroikuma-jiyusagyoban/docs/gengoshima.md`.

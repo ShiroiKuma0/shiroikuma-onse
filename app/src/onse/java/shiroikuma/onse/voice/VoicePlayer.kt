@@ -74,6 +74,27 @@ object VoicePlayer {
         }
     }
 
+    /** Czech through Piper with the app's Czech voice and speed. */
+    fun speakCzech(context: Context, text: String, voice: String? = null) {
+        if (text.isBlank()) return
+        stop()
+        val app = context.applicationContext
+        job = scope.launch {
+            _status.value = Status(busy = true, message = "Synthesising…")
+            val t0 = SystemClock.elapsedRealtime()
+            try {
+                val s = VoiceSettingsStore.current(app)
+                val pcm = shiroikuma.onse.czech.CzechEngine.synthesizePcm(app, text, voice ?: s.csVoice, s.csSpeedPct / 100f)
+                val took = SystemClock.elapsedRealtime() - t0
+                _status.value = Status(busy = true, message = "synthesis ${took} ms · audio ${"%.1f".format(pcm.size / 2.0 / 24000)} s")
+                playPcm(pcm)
+                _status.value = _status.value.copy(busy = false)
+            } catch (e: Exception) {
+                _status.value = Status(message = "Error: ${e.message ?: e.javaClass.simpleName}")
+            }
+        }
+    }
+
     private fun playPcm(pcm: ByteArray) {
         val t = AudioTrack.Builder()
             .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())

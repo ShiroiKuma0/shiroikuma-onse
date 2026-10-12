@@ -1,9 +1,10 @@
 # Sister-app contract — 白い熊 音声 render service
 
 **Callee:** `shiroikuma.onse` (白い熊 音声). **First caller:** 白い熊 自由作業盤's 言語島 (日本語 [227]).
-Revision 2026-10-01 — adds English (`lang=en`, Kokoro-82M).
+Revision 2026-10-12 — a second Czech voice, `kasandra`, and `cs_installed_voices`. (2026-10-11 added
+Czech, `lang=cs`, Piper cs_CZ; 2026-10-01 added English, `lang=en`, Kokoro-82M.)
 
-A caller hands 音声 a batch of Japanese sentences and gets back one audio file per sentence, written
+A caller hands 音声 a batch of Japanese, English or Czech sentences and gets back one audio file per sentence, written
 **exactly at the absolute path the caller names**. 音声 knows nothing about where or how the caller
 lays its files out: every directory and file name is the caller's (for 言語島, all of it is set in
 `日本語の設定 -- [227][01]`). Same family rules as the 保存復元 contract: string extras only, replies
@@ -29,14 +30,22 @@ Explicit to package `shiroikuma.onse`, with `--include-stopped-packages` semanti
 | `gap_pre`, `gap_post` | no | silence before / after, in seconds (default `0.1`) |
 | `bitrate_kbps` | no | Opus bitrate (default `48`) |
 | `format` | no | `ogg` (default: OGG/Opus, mono 24 kHz) or `wav` |
-| `lang` | no | `ja` (default, VOICEVOX) or `en` (Kokoro-82M English) |
+| `lang` | no | `ja` (default, VOICEVOX), `en` (Kokoro-82M English) or `cs` (Piper Czech) |
 | `en_voice` | no | with `lang=en`: Kokoro voice name, e.g. `am_michael` (default: 音声's English voice, am_michael) |
+| `cs_voice` | no | with `lang=cs`: Piper Czech voice name, `jirka` (male) or `kasandra` (female) (default: 音声's Czech voice, jirka) |
 | `token` | no | only checked when 「Use authorization token?」 is on in 白い熊 音声 UI |
 
 - With `lang=en`, `speaker`, `pitch`, `intonation`, `volume` and the gaps are ignored; `speed` is
   Kokoro's speed (default 音声's English speed, 1.0). English needs the Kokoro model downloaded in
   音声 (main screen → English voices → ⤓, ≈132 MB); without it the request answers
   `ERROR:english model not installed`. The 28 voices are af_*/am_* (US) and bf_*/bm_* (UK).
+- With `lang=cs`, the same knobs are ignored; `speed` is Piper's speed (default 音声's Czech speed,
+  1.0). `text` is plain Czech with diacritics (UTF-8), read as written — no pre-processing needed.
+  Each Czech voice is its own Piper model (≈67 MB), downloaded in 音声 (main screen → Czech voices →
+  ⤓): `vits-piper-cs_CZ-jirka-medium` and `vits-piper-cs_CZ-kasandra-medium`. When the requested
+  voice's model is missing the request answers `ERROR:czech model not installed`.
+  Piper renders at 22.05 kHz; 音声 resamples to 24 kHz, so the file is the same OGG/Opus mono
+  24 kHz as the other languages.
 - `text` is what VOICEVOX reads. A caller controlling pronunciation replaces a word by its
   **katakana** reading before sending; VOICEVOX reads katakana verbatim.
 - `out_path` must be absolute. Parent directories are created. The file is written as
@@ -69,7 +78,8 @@ Then exactly one terminal reply:
 
 Reasons worth keying on: `automation disabled`, `bad token`, `no-storage-access`,
 `no-foreground-start`, `voice not installed: <style> (<model file>)`, `unknown speaker: <style>`,
-`no-opus-encoder`, `english model not installed`, `unknown english voice: <name>`, `cancelled`.
+`no-opus-encoder`, `english model not installed`, `unknown english voice: <name>`,
+`czech model not installed`, `unknown czech voice: <name>`, `cancelled`.
 
 ## Cancel — broadcast `shiroikuma.onse.action.CANCEL_RENDER`
 
@@ -92,6 +102,10 @@ Extras `reply_action`, `reply_package`, optional `request_id` and `token`. Answe
 | `en_installed` | `true` when the Kokoro English model is installed |
 | `en_voices` | every English voice name, comma-separated |
 | `en_default` | 音声's selected English voice |
+| `cs_installed` | `true` when the model of 音声's selected Czech voice (`cs_default`) is installed |
+| `cs_voices` | every Czech voice name, comma-separated (`jirka,kasandra`) |
+| `cs_installed_voices` | the Czech voices whose model is installed, comma-separated |
+| `cs_default` | 音声's selected Czech voice |
 
 No pong within a few seconds means 音声 is not running and could not be started — e.g. EMUI's App
 launch refused it — as opposed to a render that is merely slow.

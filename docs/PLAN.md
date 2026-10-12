@@ -10,7 +10,8 @@ The VOICEVOX app of the 白い熊 family (`shiroikuma.onse`, fork of
 
 1. **System TTS engine.** Every installed VOICEVOX style is an Android voice (`voice/OnseTtsService`).
 2. **Render service for sister apps.** A batch of sentences in, one OGG/Opus file per sentence out,
-   at exactly the paths the caller names, in Japanese (VOICEVOX) or English (Kokoro-82M).
+   at exactly the paths the caller names, in Japanese (VOICEVOX), English (Kokoro-82M) or Czech
+   (Piper cs_CZ jirka and kasandra, added 2026-10-11/12 for 言語島's cs→ja sentences).
    Contract: [`docs/sister-app-contract-onse-render.md`](sister-app-contract-onse-render.md).
 3. **Voice library.** Every VOICEVOX voice can be heard (bundled samples) and downloaded in-app;
    English voices likewise.
@@ -47,6 +48,8 @@ All committed and pushed on `custom`; the phone runs `1.0+009`.
 | PING, `WarmActivity`, all-files + battery-exemption checks on entry | `render/RenderReceiver.kt`, `WarmActivity.kt`, `ui/StorageAccessGate.kt` |
 | English: Kokoro-82M via sherpa-onnx, 28 voices, default am_michael | `english/English.kt` |
 | 48 kbps samples and renders; clear "model not downloaded" warnings | — |
+| Czech (2026-10-11, `1.0+010`, not yet verified on the phone): Piper via sherpa-onnx, one ≈67 MB download per voice, 22.05 → 24 kHz. jirka from k2-fsa; **kasandra** (2026-10-12) converted by `convert-piper.py` and hosted on our GitHub release **`voices`** | `czech/Czech.kt`, `shiroikuma/voices/gen-czech.py`, `convert-piper.py` |
+| Main screen per language (2026-10-12): current voice + its settings on top, every other voice folded (Japanese by character, singing inside Japanese); the voice settings left the UI page | `MainScreen.kt` |
 
 **Verified on the Mate XT:**
 - **Japanese render:** 3 sentences gave valid mono OGG/Opus files. Warm, the first file arrives at

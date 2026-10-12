@@ -74,11 +74,13 @@ class RenderReceiver : BroadcastReceiver() {
         const val EXTRA_FORMAT = "format"
         const val EXTRA_LANG = "lang"
         const val EXTRA_EN_VOICE = "en_voice"
+        const val EXTRA_CS_VOICE = "cs_voice"
 
         /**
          * `PING` → `event=pong`: `result` is `OK` (or the gate's `ERROR:`), plus `version`,
          * `styles` (installed readable style ids, comma-separated), `storage` and `battery_exempt`
-         * (`true`/`false`) — so a caller can tell "not running" from "slow", and see why a render
+         * (`true`/`false`), and per sherpa-onnx language `en_*` / `cs_*` (installed, voices,
+         * default) — so a caller can tell "not running" from "slow", and see why a render
          * would fail before sending one.
          */
         fun pong(context: Context, replyAction: String, replyPackage: String, requestId: String, refusal: String?) {
@@ -99,6 +101,11 @@ class RenderReceiver : BroadcastReceiver() {
                     putExtra("en_installed", shiroikuma.onse.english.EnglishStore.isInstalled(context).toString())
                     putExtra("en_voices", if (refusal == null) shiroikuma.onse.english.EnglishCatalog.get(context).voices.joinToString(",") { it.name } else "")
                     putExtra("en_default", shiroikuma.onse.voice.VoiceSettingsStore.current(context).enVoice)
+                    val csDefault = shiroikuma.onse.voice.VoiceSettingsStore.current(context).csVoice
+                    putExtra("cs_installed", shiroikuma.onse.czech.CzechStore.isInstalled(context, csDefault).toString())
+                    putExtra("cs_installed_voices", if (refusal == null) shiroikuma.onse.czech.CzechStore.installedVoices(context).joinToString(",") { it.name } else "")
+                    putExtra("cs_voices", if (refusal == null) shiroikuma.onse.czech.CzechCatalog.get(context).voices.joinToString(",") { it.name } else "")
+                    putExtra("cs_default", csDefault)
                 },
             )
         }
