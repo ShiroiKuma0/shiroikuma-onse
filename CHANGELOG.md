@@ -4,7 +4,7 @@ This file carries both histories: 白い熊 音声's releases first, newest firs
 Upstream (0266st/VOICEVOX_TTS_Engine_For_Android) publishes no changelog of its own, so its section
 below is written from its tags, merged pull requests and commit history.
 
-## 白い熊 音声 — unreleased
+## 白い熊 音声 1.0+013 — 2026-10-13
 
 Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged).
 
