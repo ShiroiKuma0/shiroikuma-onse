@@ -6,7 +6,7 @@ below is written from its tags, merged pull requests and commit history.
 
 ## 白い熊 音声 — unreleased
 
-Built on upstream `master` at `bfbe4f2` (2026-01-25).
+Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged).
 
 - Fork set up as **白い熊 音声** (`shiroikuma.onse`), installable side-by-side with upstream.
 - Fork build layer (`shiroikuma/fork.gradle`): the `onse` flavour, arm64-v8a only, our own signing
@@ -14,8 +14,8 @@ Built on upstream `master` at `bfbe4f2` (2026-01-25).
   that writes `~/tmp/shiroikuma-onse_<version>_arm64-v8a.apk`.
 - De-branded: our name everywhere upstream hard-coded "VOICEVOX TTS Engine", and the black-yellow
   icon traced from upstream's launcher artwork with 音.
-- **VOICEVOX CORE 0.17.0** — upstream's open pull request #19 folded in (VOICEVOX ONNX Runtime 1.23.2,
-  models and runtime fetched at build time, initialisation off the main thread).
+- **VOICEVOX CORE 0.17.0** — carried as a fold-in of upstream's pull request #19 until upstream merged
+  it on 2026-09-30; the fork now builds on upstream's own merge.
 - **Every VOICEVOX voice.** The APK bundles **No.7** (`6.vvm`); all 27 models of the official
   voicevox_vvm 0.17.0 release are listed — 218 styles — and downloaded in-app on request, verified
   by SHA-256. **217 bundled samples** (1.8 MB of OGG/Opus, generated on the PC with the same
@@ -61,10 +61,32 @@ Built on upstream `master` at `bfbe4f2` (2026-01-25).
   with a *Reselect default* button, English speed on the UI page, English in the try-it box, and
   `lang=en` / `en_voice` in the render contract (PING reports `en_installed`, `en_voices`).
 
+- **Czech voices — Piper** through sherpa-onnx: **jirka** (male, dataset CC0, from k2-fsa's
+  packages) and **kasandra** (female, dataset CC BY 4.0, Ondřej Šimek — converted for sherpa-onnx by
+  `shiroikuma/voices/convert-piper.py` and hosted on this repo's release `voices`), one ≈67 MB model
+  per voice downloaded in-app, 22.05 kHz resampled to 24 kHz; Czech in the try-it box; `lang=cs` /
+  `cs_voice` in the render contract (PING reports `cs_installed`, `cs_voices`,
+  `cs_installed_voices`, `cs_default`) — for 言語島's cs→ja sentences.
+- **Main screen per language:** Japanese, English and Czech sections, each with the current voice
+  and all its settings on top and every other voice folded away — Japanese by character, the
+  singing voices inside Japanese. The voice settings moved here from the UI page.
+
 - **Sample and render quality:** the bundled voice samples are now Opus at 48 kbps in general-audio
   mode (they were 20 kbps "voip", which audibly dulled them), and renders default to 48 kbps.
 
 # Upstream — VOICEVOX TTS Engine for Android
+
+## Unreleased on `master` (2026-09-20 – 2026-09-30)
+
+- **VOICEVOX CORE 0.17.0** (#19): CORE 0.15.0-preview.16 → 0.17.0 (blocking API), VOICEVOX ONNX
+  Runtime 1.23.2 in place of Microsoft's 1.14.0; `downloadVoicevox` fetches the core, the runtime and
+  the 0.17 voice model (none committed any more); initialisation waits on one Future instead of
+  copying 57 MB on every start; WAV headers stripped before audio is sent (no click at the start);
+  `callback.error` on failure, interruption and stop handled; a Zip Slip-safe dictionary extractor
+  with unit tests; `MainActivity` becomes a test screen reporting time to first audio.
+- **Project tidy-up** (#18): the duplicate unpacked OpenJTalk dictionary removed from `res/raw` (the
+  zip is used), an unused test removed, `VoicevoxTTSService.kt` renamed `VoicevoxTTSEngine.kt` (log
+  tags to match), IDE settings untracked except code style, `gradlew` executable.
 
 ## Unreleased on `master` (2025-03-17 – 2026-01-25)
 
