@@ -128,13 +128,13 @@ class RenderService : Service() {
                 try {
                     val text = item.getString("text")
                     require(outPath.startsWith("/")) { "out_path must be absolute" }
-                    val wav = OnseEngine.synthesizeWav(app, text, style, settings)
+                    val (wav, kana) = OnseEngine.synthesizeWavKana(app, text, style, settings)
                     val pcm = OnseEngine.pcmFromWav(wav)
                     if (wantWav) OggOpusWriter.writeWav(wav, File(outPath))
                     else OggOpusWriter.write(pcm, OnseEngine.SAMPLE_RATE, bitrate, File(outPath))
                     val durationMs = pcm.size / 2L * 1000 / OnseEngine.SAMPLE_RATE
                     ok++
-                    RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, durationMs, null, i + 1, total)
+                    RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, durationMs, null, i + 1, total, kana)
                 } catch (e: Exception) {
                     failed++
                     Log.w(TAG, "item $id failed", e)

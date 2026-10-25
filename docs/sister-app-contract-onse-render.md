@@ -1,8 +1,9 @@
 # Sister-app contract — 白い熊 音声 render service
 
 **Callee:** `shiroikuma.onse` (白い熊 音声). **First caller:** 白い熊 自由作業盤's 言語島 (日本語 [227]).
-Revision 2026-10-12 — a second Czech voice, `kasandra`, and `cs_installed_voices`. (2026-10-11 added
-Czech, `lang=cs`, Piper cs_CZ; 2026-10-01 added English, `lang=en`, Kokoro-82M.)
+Revision 2026-10-24 — Japanese items reply with `kana`, the reading VOICEVOX used. (2026-10-12 added
+a second Czech voice, `kasandra`, and `cs_installed_voices`; 2026-10-11 added Czech, `lang=cs`, Piper
+cs_CZ; 2026-10-01 added English, `lang=en`, Kokoro-82M.)
 
 A caller hands 音声 a batch of Japanese, English or Czech sentences and gets back one audio file per sentence, written
 **exactly at the absolute path the caller names**. 音声 knows nothing about where or how the caller
@@ -67,6 +68,7 @@ Per item, as soon as its file is in place (or failed):
 | `duration_ms` | audio length, integer string |
 | `index`, `total` | 1-based position of the item and the batch size |
 | `error` | on `ERROR` only, one line |
+| `kana` | on `OK` with `lang=ja` only (2026-10-24): `AudioQuery.kana` of the query the file was made from — the AquesTalk-style reading OpenJTalk chose, e.g. `フラッフワ/タ'ノイヌヲ/…`, in VOICEVOX's own notation (`'` accent, `/` phrase, `、` pause, `_` devoiced; the caller strips the marks). Lets a caller catch a misreading (他 read タ, not ホカ) and resend that word as katakana. Omitted, never empty, when CORE gives none; English and Czech items never carry it, and an older 音声 doesn't send it |
 
 Then exactly one terminal reply:
 

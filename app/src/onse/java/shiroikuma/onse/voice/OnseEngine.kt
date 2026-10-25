@@ -115,7 +115,20 @@ object OnseEngine {
         styleId: Int,
         settings: VoiceSettings,
         rateFactor: Float = 1f,
-    ): ByteArray {
+    ): ByteArray = synthesizeWavKana(context, text, styleId, settings, rateFactor).first
+
+    /**
+     * Like [synthesizeWav], plus the reading VOICEVOX used: `AudioQuery.kana`, the AquesTalk-style
+     * notation (`'` accent, `/` phrase, `、` pause, `_` devoiced) — null if CORE leaves it out.
+     */
+    @Synchronized
+    fun synthesizeWavKana(
+        context: Context,
+        text: String,
+        styleId: Int,
+        settings: VoiceSettings,
+        rateFactor: Float = 1f,
+    ): Pair<ByteArray, String?> {
         val style = resolveStyle(context, styleId)
         val model = VoiceCatalog.get(context).modelFor(style) ?: error("no model for style $style")
         ensureLoaded(context, model)
@@ -130,7 +143,7 @@ object OnseEngine {
         q.postPhonemeLength = settings.postPauseMs / 1000.0
         val wav = s.synthesis(q, style).perform()
         Log.d(TAG, "style $style: ${text.length} chars in ${System.currentTimeMillis() - t0} ms")
-        return wav
+        return wav to q.kana
     }
 
     /** The PCM payload of a WAV (skips the RIFF header chunks). */

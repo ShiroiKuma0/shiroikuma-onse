@@ -123,7 +123,10 @@ class RenderReceiver : BroadcastReceiver() {
             )
         }
 
-        /** One item's answer: `event=item`, `id`, `status` OK/ERROR, `out_path`, `duration_ms`, `error`. */
+        /**
+         * One item's answer: `event=item`, `id`, `status` OK/ERROR, `out_path`, `duration_ms`, `error`;
+         * on a Japanese OK also `kana`, the reading VOICEVOX used (omitted when CORE gives none).
+         */
         fun item(
             context: Context,
             replyAction: String,
@@ -136,6 +139,7 @@ class RenderReceiver : BroadcastReceiver() {
             error: String?,
             index: Int,
             total: Int,
+            kana: String? = null,
         ) {
             context.sendBroadcast(
                 Intent(replyAction).apply {
@@ -150,6 +154,7 @@ class RenderReceiver : BroadcastReceiver() {
                     putExtra("index", index.toString())
                     putExtra("total", total.toString())
                     error?.let { putExtra("error", it.replace('\n', ' ')) }
+                    if (ok) kana?.takeIf { it.isNotEmpty() }?.let { putExtra("kana", it) }
                 },
             )
         }
