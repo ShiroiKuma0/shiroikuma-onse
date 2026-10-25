@@ -10,7 +10,7 @@ A fork of [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_T
 
 Installs **side-by-side** with the original (app id `shiroikuma.onse`).
 
-**📥 Latest release: [`1.0+013`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
+**📥 Latest release: [`1.0+014`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
 
 </div>
 
@@ -33,7 +33,8 @@ in-app on request, and the try-it box picks the language from the text you type.
 ## 📼 A render service for sister apps
 Other apps send a batch of sentences by intent — language, voice, speed, pitch, bitrate per
 request — and get one OGG/Opus file per sentence at the exact path they name, written atomically,
-with a reply per item. 言語島, the Japanese Language Islands suite in 白い熊 自由作業盤, makes all
+with a reply per item — for Japanese including the kana reading VOICEVOX actually spoke, so a
+caller can catch a misread word and resend it in katakana. 言語島, the Japanese Language Islands suite in 白い熊 自由作業盤, makes all
 its Japanese, English and Czech audio here. The contract: [`docs/sister-app-contract-onse-render.md`](docs/sister-app-contract-onse-render.md).
 
 ---

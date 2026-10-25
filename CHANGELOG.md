@@ -4,6 +4,20 @@ This file carries both histories: 白い熊 音声's releases first, newest firs
 Upstream (0266st/VOICEVOX_TTS_Engine_For_Android) publishes no changelog of its own, so its section
 below is written from its tags, merged pull requests and commit history.
 
+## 白い熊 音声 1.0+014 — 2026-10-25
+
+Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
+
+- **Render replies carry the reading VOICEVOX used.** Each Japanese item (`lang=ja`) that renders
+  `OK` now replies with an extra `kana`: the `AudioQuery.kana` of the query the file was made from,
+  in VOICEVOX's AquesTalk-style notation (`'` accent, `/` phrase, `、` pause, `_` devoiced), e.g.
+  `フラッフワ/タ'ノイヌヲ/…`. OpenJTalk picks one reading per word without knowing the meaning
+  (他 → タ where ホカ was meant, 外, 家, 後, 日本, …); with the reading in hand, 自由作業盤's 言語島
+  (from `+093`) compares it with its furigana and resends a misread word as katakana. The extra is
+  omitted, never empty, when CORE gives no reading; failed, English and Czech items are unchanged,
+  and callers that ignore it see no difference. Contract revision 2026-10-24
+  (`docs/sister-app-contract-onse-render.md`).
+
 ## 白い熊 音声 1.0+013 — 2026-10-13
 
 Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged).
