@@ -10,7 +10,7 @@ A fork of [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_T
 
 Installs **side-by-side** with the original (app id `shiroikuma.onse`).
 
-**📥 Latest release: [`1.0+014`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
+**📥 Latest release: [`1.0+015`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
 
 </div>
 

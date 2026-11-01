@@ -4,6 +4,15 @@ This file carries both histories: 白い熊 音声's releases first, newest firs
 Upstream (0266st/VOICEVOX_TTS_Engine_For_Android) publishes no changelog of its own, so its section
 below is written from its tags, merged pull requests and commit history.
 
+## 白い熊 音声 1.0+015 — 2026-11-01
+
+Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
+
+- **The PC voice reference points to the renamed tool.** The PC tool whose voice this app matches is now
+  `shiroikuma-subtitles` (command `subtitles epub --tts`, formerly `shiroikuma-jisho-subtitles`).
+  The voice defaults' documentation and the voice-asset generator now use the new name. The voice is
+  unchanged: No.7 / 読み聞かせ, style 31, speedScale 1.15. The app behaves exactly as in 1.0+014.
+
 ## 白い熊 音声 1.0+014 — 2026-10-25
 
 Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
