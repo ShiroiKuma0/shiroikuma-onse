@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * How 白い熊 音声 speaks: the selected style and the VOICEVOX audio-query knobs.
  *
- * The defaults are the 白い熊 voice of `shiroikuma-jisho-subtitles`: **No.7 / 読み聞かせ
+ * The defaults are the 白い熊 voice of `shiroikuma-subtitles` (`subtitles epub --tts`): **No.7 / 読み聞かせ
  * (style 31)** at speedScale **1.15**, pitch 0, intonation 1.0. Scales are stored in hundredths
  * (115 = 1.15) so every one is a slider; pauses in milliseconds.
  */

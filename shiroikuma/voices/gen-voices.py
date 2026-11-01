@@ -38,7 +38,7 @@ ORT = "1.23.2"
 BASE_URL = f"https://github.com/VOICEVOX/voicevox_vvm/releases/download/{RELEASE}"
 MODELS = [str(n) for n in range(25)] + ["n0", "s0"]
 BUNDLED = "6"               # No.7 — shipped inside the APK as res/raw/model.vvm
-DEFAULT_STYLE = 31          # No.7 / 読み聞かせ — the 白い熊 voice (shiroikuma-jisho-subtitles)
+DEFAULT_STYLE = 31          # No.7 / 読み聞かせ — the 白い熊 voice (shiroikuma-subtitles)
 SAMPLE_TEXT = "こんにちは。これは声の見本です。"
 
 VVM_DIR = os.path.join(ROOT, f".scratch/vvm-{RELEASE}")

@@ -5,7 +5,7 @@
 Package **`shiroikuma.onse`**, installable side-by-side with upstream (`dev.ztssst.voicevox_tts`).
 
 Why this fork exists: to give the phone the same VOICEVOX voice the PC uses in
-`~/git/shiroikuma-jisho-subtitles` (**No.7 / 読み聞かせ, style id 31**, speedScale 1.15), and to make it
+`~/git/shiroikuma-subtitles` (command `subtitles epub --tts`; **No.7 / 読み聞かせ, style id 31**, speedScale 1.15), and to make it
 a generic render service other sister apps drive by intent — first of all the **言語島 (gengoshima)
 Japanese Language Islands suite** in `~/git/shiroikuma-jiyusagyoban` (project 日本語 [227]), which asks
 this app to render each sentence to OGG/Opus at a path it names. It stays a system TTS voice too.
