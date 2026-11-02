@@ -10,7 +10,7 @@ A fork of [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_T
 
 Installs **side-by-side** with the original (app id `shiroikuma.onse`).
 
-**📥 Latest release: [`1.0+015`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
+**📥 Latest release: [`1.0+016`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
 
 </div>
 
@@ -35,7 +35,9 @@ Other apps send a batch of sentences by intent — language, voice, speed, pitch
 request — and get one OGG/Opus file per sentence at the exact path they name, written atomically,
 with a reply per item — for Japanese including the kana reading VOICEVOX actually spoke, so a
 caller can catch a misread word and resend it in katakana. 言語島, the Japanese Language Islands suite in 白い熊 自由作業盤, makes all
-its Japanese, English and Czech audio here. The contract: [`docs/sister-app-contract-onse-render.md`](docs/sister-app-contract-onse-render.md).
+its Japanese, English and Czech audio here. 白い熊 地図 renders its navigation prompts ahead in the very voice
+of the TTS engine (`speaker=tts`), and sends the prompt that is due now in an urgent lane that overtakes
+every waiting batch. The contract: [`docs/sister-app-contract-onse-render.md`](docs/sister-app-contract-onse-render.md).
 
 ---
 

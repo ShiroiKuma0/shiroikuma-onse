@@ -4,6 +4,25 @@ This file carries both histories: 白い熊 音声's releases first, newest firs
 Upstream (0266st/VOICEVOX_TTS_Engine_For_Android) publishes no changelog of its own, so its section
 below is written from its tags, merged pull requests and commit history.
 
+## 白い熊 音声 1.0+016 — 2026-11-02
+
+Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
+
+- **白い熊 地図 is a render caller.** 地図 (`shiroikuma.chizu`, 白い熊's OsmAnd fork) pre-renders its
+  navigation prompts through the render service and plays them itself, because the TTS engine makes
+  a whole sentence before any sound comes out and a turn prompt with a street name was heard after
+  the turn. `shiroikuma.chizu` is in the manifest's `<queries>`, so the replies reach it.
+- **`speaker=tts`** renders with exactly what 音声 speaks as the system TTS engine: the selected style
+  (No.7 when its model is gone) and every stored knob — speed, pitch, intonation, volume, pauses.
+  The new extra `rate` carries the caller's Android speech rate and is applied only when 「follow the
+  system rate」 is on, as in the engine, so a pre-rendered prompt and a spoken one sound the same.
+- **An urgent lane: `priority=high`.** Such a request goes ahead of every queued normal one, and a
+  running normal batch yields to it at its next item boundary, then resumes.
+- **`render_ms`** on every item reply: the time spent synthesising and writing that item.
+- Contract revision 2026-11-02 (`docs/sister-app-contract-onse-render.md`), with render timings
+  measured on the Mate XT: about 0.8× the audio length for VOICEVOX as WAV; Opus encoding adds ~5 s
+  per 10 s of speech.
+
 ## 白い熊 音声 1.0+015 — 2026-11-01
 
 Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
