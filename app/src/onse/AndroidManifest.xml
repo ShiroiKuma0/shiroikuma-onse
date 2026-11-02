@@ -14,11 +14,13 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
-    <!-- Both automation callers, by name — without this the reply's setPackage fails silently
-         on Android 11+ and the data door cannot read a caller's signature (contract v2 §2a). -->
+    <!-- Both automation callers and every render caller, by name — without this the reply's
+         setPackage fails silently on Android 11+ and the data door cannot read a caller's
+         signature (contract v2 §2a). 地図 renders navigation prompts ahead (render contract). -->
     <queries>
         <package android:name="shiroikuma.oyokanri" />
         <package android:name="shiroikuma.jiyusagyoban" />
+        <package android:name="shiroikuma.chizu" />
     </queries>
 
     <application

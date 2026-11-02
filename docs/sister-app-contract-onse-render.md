@@ -1,7 +1,9 @@
 # Sister-app contract — 白い熊 音声 render service
 
-**Callee:** `shiroikuma.onse` (白い熊 音声). **First caller:** 白い熊 自由作業盤's 言語島 (日本語 [227]).
-Revision 2026-10-24 — Japanese items reply with `kana`, the reading VOICEVOX used. (2026-10-12 added
+**Callee:** `shiroikuma.onse` (白い熊 音声). **Callers:** 白い熊 自由作業盤's 言語島 (日本語 [227]), and
+白い熊 地図 (`shiroikuma.chizu`), which pre-renders navigation prompts and plays them itself.
+Revision 2026-11-02 (音声 `1.0+016`) — 地図 as a caller; `speaker=tts`, `rate`, `priority=high`, and
+`render_ms` on every item. (2026-10-24: Japanese items reply with `kana`, the reading VOICEVOX used. 2026-10-12 added
 a second Czech voice, `kasandra`, and `cs_installed_voices`; 2026-10-11 added Czech, `lang=cs`, Piper
 cs_CZ; 2026-10-01 added English, `lang=en`, Kokoro-82M.)
 
@@ -23,7 +25,9 @@ Explicit to package `shiroikuma.onse`, with `--include-stopped-packages` semanti
 | `reply_action` | yes | action of the reply broadcasts |
 | `reply_package` | yes | package the replies are sent to |
 | `batch_path` | yes | absolute path of a JSON file `{"items":[{"id":…,"text":…,"out_path":…}, …]}` |
-| `speaker` | no | VOICEVOX style id (default `31`, No.7 / 読み聞かせ). Its model must be installed in 音声 |
+| `speaker` | no | VOICEVOX style id (default `31`, No.7 / 読み聞かせ). Its model must be installed in 音声. Or `tts` (since `1.0+016`): exactly what 音声 speaks as the system TTS engine — see below |
+| `rate` | no | with `speaker=tts`: the caller's Android TTS speech rate (`setSpeechRate`, `1.0` = normal); applied only when 「follow the system rate」 is on in 音声, exactly as the engine does |
+| `priority` | no | `high` (since `1.0+016`): ahead of every queued normal request, and a running normal request yields at its next item boundary; anything else is normal |
 | `speed` | no | speedScale as a decimal (default `1.15`) |
 | `pitch` | no | pitchScale, −0.15…+0.15 (default `0`) |
 | `intonation` | no | intonationScale (default `1.0`) |
@@ -47,6 +51,14 @@ Explicit to package `shiroikuma.onse`, with `--include-stopped-packages` semanti
   voice's model is missing the request answers `ERROR:czech model not installed`.
   Piper renders at 22.05 kHz; 音声 resamples to 24 kHz, so the file is the same OGG/Opus mono
   24 kHz as the other languages.
+- `speaker=tts` takes 音声's selected style (falling back to No.7 when its model is gone, as the
+  engine does) and every knob set in 音声 — speed, pitch, intonation, volume, pauses — instead of the
+  contract defaults, and multiplies the speed by `rate` when the engine would. A pre-rendered file
+  and the same sentence spoken through the TTS engine are then the same audio, provided the TTS
+  caller leaves the engine's default voice (no `setVoice`). Any of `speed`, `pitch`, `intonation`,
+  `volume`, `gap_pre`, `gap_post` still overrides its knob. `lang=en` / `lang=cs` need no such
+  option: without `en_voice` / `cs_voice` / `speed` they already use 音声's own voice and speed (the
+  system TTS engine itself speaks Japanese only).
 - `text` is what VOICEVOX reads. A caller controlling pronunciation replaces a word by its
   **katakana** reading before sending; VOICEVOX reads katakana verbatim.
 - `out_path` must be absolute. Parent directories are created. The file is written as
@@ -68,6 +80,7 @@ Per item, as soon as its file is in place (or failed):
 | `duration_ms` | audio length, integer string |
 | `index`, `total` | 1-based position of the item and the batch size |
 | `error` | on `ERROR` only, one line |
+| `render_ms` | since `1.0+016`: milliseconds spent synthesising and writing this item (queueing excluded) |
 | `kana` | on `OK` with `lang=ja` only (2026-10-24): `AudioQuery.kana` of the query the file was made from — the AquesTalk-style reading OpenJTalk chose, e.g. `フラッフワ/タ'ノイヌヲ/…`, in VOICEVOX's own notation (`'` accent, `/` phrase, `、` pause, `_` devoiced; the caller strips the marks). Lets a caller catch a misreading (他 read タ, not ホカ) and resend that word as katakana. Omitted, never empty, when CORE gives none; English and Czech items never carry it, and an older 音声 doesn't send it |
 
 Then exactly one terminal reply:
@@ -126,8 +139,20 @@ render finished in 13.0 s. 音声 checks and requests the exemption every time i
 
 ## Behaviour
 
-- Requests queue and run one at a time on a foreground service; synthesis takes a few seconds per
-  sentence on the phone.
+- Requests queue and run one at a time on a foreground service. Two lanes: `priority=high` requests
+  run in arrival order before any queued normal one; a running normal request checks between items
+  and runs every waiting high request to its `done` first, then resumes. A running high request is
+  never interrupted.
+- Speed, measured on the Mate XT (2026-11-02, warm, one item per request, broadcast to file in
+  place): VOICEVOX takes roughly 0.8× the audio's length. 「右方向です。ノヴォドヴォルスカーえ、入ります。
+  更にそこから、250メートル先、左方向です。」 (10.5 s of audio) took 7.5–10.1 s as `wav` and 14.6–15.4 s
+  as `ogg` (Opus encoding adds ~5 s). Split at the 。, the three parts took 1.1 s, 2.0–2.2 s and
+  3.9–4.4 s — so a caller in a hurry sends each sentence as its own item and starts playing the first
+  while the rest render.
 - Gate: the same switch and optional token as 音声's 保存復元 automation (shipped ON, token off).
 - The caller's manifest must list `shiroikuma.onse` in `<queries>`, and 音声 lists
-  `shiroikuma.jiyusagyoban`, so the replies' `setPackage` resolves on Android 11+.
+  `shiroikuma.jiyusagyoban` and `shiroikuma.chizu` (since `1.0+016`), so the replies' `setPackage`
+  resolves on Android 11+. A new caller is one line in 音声's flavour manifest.
+- `out_path` and `batch_path` may live in the caller's `Android/media/<package>/` (地図 uses
+  `/sdcard/Android/media/shiroikuma.chizu/voice/`): All-Files access reaches it, unlike
+  `Android/data`. A `.nomedia` file there keeps the clips out of the media library.

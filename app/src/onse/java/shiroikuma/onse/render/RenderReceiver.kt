@@ -75,6 +75,8 @@ class RenderReceiver : BroadcastReceiver() {
         const val EXTRA_LANG = "lang"
         const val EXTRA_EN_VOICE = "en_voice"
         const val EXTRA_CS_VOICE = "cs_voice"
+        const val EXTRA_PRIORITY = "priority"
+        const val EXTRA_RATE = "rate"
 
         /**
          * `PING` → `event=pong`: `result` is `OK` (or the gate's `ERROR:`), plus `version`,
@@ -125,7 +127,8 @@ class RenderReceiver : BroadcastReceiver() {
 
         /**
          * One item's answer: `event=item`, `id`, `status` OK/ERROR, `out_path`, `duration_ms`, `error`;
-         * on a Japanese OK also `kana`, the reading VOICEVOX used (omitted when CORE gives none).
+         * on a Japanese OK also `kana`, the reading VOICEVOX used (omitted when CORE gives none);
+         * `render_ms`, how long synthesis and writing took.
          */
         fun item(
             context: Context,
@@ -140,6 +143,7 @@ class RenderReceiver : BroadcastReceiver() {
             index: Int,
             total: Int,
             kana: String? = null,
+            renderMs: Long? = null,
         ) {
             context.sendBroadcast(
                 Intent(replyAction).apply {
@@ -155,6 +159,7 @@ class RenderReceiver : BroadcastReceiver() {
                     putExtra("total", total.toString())
                     error?.let { putExtra("error", it.replace('\n', ' ')) }
                     if (ok) kana?.takeIf { it.isNotEmpty() }?.let { putExtra("kana", it) }
+                    renderMs?.let { putExtra("render_ms", it.toString()) }
                 },
             )
         }

@@ -21,6 +21,7 @@ import shiroikuma.onse.automation.StateExportReceiver
 import shiroikuma.onse.voice.OnseEngine
 import shiroikuma.onse.voice.VoiceCatalog
 import shiroikuma.onse.voice.VoiceSettings
+import shiroikuma.onse.voice.VoiceSettingsStore
 import shiroikuma.onse.voice.VoiceStore
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -31,6 +32,10 @@ import java.util.concurrent.atomic.AtomicInteger
  * one at a time on a single worker (the synthesizer is one per process); each item is answered as
  * soon as its file is in place, then the request gets one `done`. Foreground (specialUse) with a
  * partial wakelock — synthesis runs a few seconds per sentence on the phone.
+ *
+ * Two lanes: a `priority=high` request goes ahead of every queued normal one, and a running normal
+ * request yields to it at its next item boundary, then carries on (地図's "next turn" prompt
+ * overtaking its look-ahead batch). High requests run among themselves in arrival order.
  *
  * [onStartCommand] keeps the family recipe: read the reply address → guarded `startForeground`
  * (a refusal is answered) → only then validation and queuing.
@@ -43,10 +48,14 @@ class RenderService : Service() {
         val replyPackage: String,
         val batchPath: String,
         val params: Intent,
+        val high: Boolean,
     )
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val queue = Channel<Request>(Channel.UNLIMITED)
+    /** One token per queued request; the worker takes whichever request is first in line. */
+    private val wake = Channel<Unit>(Channel.UNLIMITED)
+    private val urgent = ArrayDeque<Request>()
+    private val normal = ArrayDeque<Request>()
     private val pending = AtomicInteger(0)
     private var wakeLock: PowerManager.WakeLock? = null
 
@@ -54,7 +63,18 @@ class RenderService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        scope.launch { for (r in queue) runRequest(r) }
+        scope.launch { for (t in wake) next()?.let { runRequest(it) } }
+    }
+
+    private fun next(): Request? = synchronized(urgent) { urgent.removeFirstOrNull() ?: normal.removeFirstOrNull() }
+
+    /**
+     * Called by a normal request at each item boundary: runs every waiting high request to its
+     * `done` first. A token left behind in [wake] then finds nothing and is skipped.
+     */
+    private fun yieldToUrgent(current: Request) {
+        if (current.high) return
+        while (true) runRequest(synchronized(urgent) { urgent.removeFirstOrNull() } ?: return)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -77,7 +97,10 @@ class RenderService : Service() {
         }
         pending.incrementAndGet()
         acquireWakeLock()
-        queue.trySend(Request(requestId, replyAction, replyPackage, batch, intent))
+        val high = intent.getStringExtra(RenderReceiver.EXTRA_PRIORITY).equals("high", true)
+        val request = Request(requestId, replyAction, replyPackage, batch, intent, high)
+        synchronized(urgent) { (if (high) urgent else normal).addLast(request) }
+        wake.trySend(Unit)
         return START_NOT_STICKY
     }
 
@@ -99,7 +122,13 @@ class RenderService : Service() {
                 "cs" -> { renderCzech(r, items, total).let { (o, f) -> ok = o; failed = f }; return }
             }
             val catalog = VoiceCatalog.get(app)
-            val style = params.getStringExtra(RenderReceiver.EXTRA_SPEAKER)?.toIntOrNull() ?: VoiceSettings.PREFERRED_STYLE
+            val speaker = params.getStringExtra(RenderReceiver.EXTRA_SPEAKER)
+            // speaker=tts: exactly what the system TTS engine would speak — the voice and every
+            // knob set in 音声, and the caller's Android speech rate when 「follow」 is on.
+            val asTts = speaker.equals(SPEAKER_TTS, true)
+            val stored = VoiceSettingsStore.current(app)
+            val style = if (asTts) OnseEngine.resolveStyle(app, stored.styleId)
+            else speaker?.toIntOrNull() ?: VoiceSettings.PREFERRED_STYLE
             val model = catalog.modelFor(style)
             if (model == null || catalog.choiceFor(style) == null) {
                 RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:unknown speaker: $style")
@@ -114,9 +143,13 @@ class RenderService : Service() {
                 RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:no-opus-encoder (ask for format=wav)")
                 return
             }
-            val settings = settingsFrom(params, style)
+            val settings = settingsFrom(params, if (asTts) stored.copy(styleId = style) else VoiceSettings(styleId = style))
+            val rateFactor = if (asTts && stored.followSystemRate) {
+                params.getStringExtra(RenderReceiver.EXTRA_RATE)?.toFloatOrNull()?.takeIf { it > 0f } ?: 1f
+            } else 1f
             val bitrate = params.getStringExtra(RenderReceiver.EXTRA_BITRATE)?.toIntOrNull() ?: DEFAULT_BITRATE_KBPS
             for (i in 0 until total) {
+                yieldToUrgent(r)
                 if (cancelledRequests.remove(r.requestId) != null) {
                     RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:cancelled|$ok|$failed|$total")
                     return
@@ -125,16 +158,17 @@ class RenderService : Service() {
                 val id = item.optString("id")
                 val outPath = item.optString("out_path")
                 updateNotification("音声 ${i + 1}/$total")
+                val t0 = System.currentTimeMillis()
                 try {
                     val text = item.getString("text")
                     require(outPath.startsWith("/")) { "out_path must be absolute" }
-                    val (wav, kana) = OnseEngine.synthesizeWavKana(app, text, style, settings)
+                    val (wav, kana) = OnseEngine.synthesizeWavKana(app, text, style, settings, rateFactor)
                     val pcm = OnseEngine.pcmFromWav(wav)
                     if (wantWav) OggOpusWriter.writeWav(wav, File(outPath))
                     else OggOpusWriter.write(pcm, OnseEngine.SAMPLE_RATE, bitrate, File(outPath))
                     val durationMs = pcm.size / 2L * 1000 / OnseEngine.SAMPLE_RATE
                     ok++
-                    RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, durationMs, null, i + 1, total, kana)
+                    RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, durationMs, null, i + 1, total, kana, System.currentTimeMillis() - t0)
                 } catch (e: Exception) {
                     failed++
                     Log.w(TAG, "item $id failed", e)
@@ -225,6 +259,7 @@ class RenderService : Service() {
         var ok = 0
         var failed = 0
         for (i in 0 until total) {
+            yieldToUrgent(r)
             if (cancelledRequests.remove(r.requestId) != null) {
                 RenderReceiver.done(app, r.replyAction, r.replyPackage, r.requestId, "ERROR:cancelled|$ok|$failed|$total")
                 return ok to failed
@@ -233,13 +268,14 @@ class RenderService : Service() {
             val id = item.optString("id")
             val outPath = item.optString("out_path")
             updateNotification("$label ${i + 1}/$total")
+            val t0 = System.currentTimeMillis()
             try {
                 require(outPath.startsWith("/")) { "out_path must be absolute" }
                 val pcm = synth(item.getString("text"), speed)
                 if (wantWav) OggOpusWriter.writeWav(shiroikuma.onse.english.EnglishEngine.wav(pcm, rate), File(outPath))
                 else OggOpusWriter.write(pcm, rate, bitrate, File(outPath))
                 ok++
-                RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, pcm.size / 2L * 1000 / rate, null, i + 1, total)
+                RenderReceiver.item(app, r.replyAction, r.replyPackage, r.requestId, id, true, outPath, pcm.size / 2L * 1000 / rate, null, i + 1, total, renderMs = System.currentTimeMillis() - t0)
             } catch (e: Exception) {
                 failed++
                 Log.w(TAG, "$label item $id failed", e)
@@ -250,11 +286,13 @@ class RenderService : Service() {
         return ok to failed
     }
 
-    /** Request parameters over the app's own voice settings; scales as decimals (`1.15`). */
-    private fun settingsFrom(i: Intent, style: Int): VoiceSettings {
+    /**
+     * Request parameters over [base] — the contract's defaults, or with `speaker=tts` 音声's own
+     * settings; scales as decimals (`1.15`).
+     */
+    private fun settingsFrom(i: Intent, base: VoiceSettings): VoiceSettings {
         fun pct(key: String, def: Int) = i.getStringExtra(key)?.toDoubleOrNull()?.let { (it * 100).toInt() } ?: def
         fun ms(key: String, def: Int) = i.getStringExtra(key)?.toDoubleOrNull()?.let { (it * 1000).toInt() } ?: def
-        val base = VoiceSettings(styleId = style)
         return base.copy(
             speedPct = pct(RenderReceiver.EXTRA_SPEED, base.speedPct),
             pitchPct = pct(RenderReceiver.EXTRA_PITCH, base.pitchPct),
@@ -296,7 +334,7 @@ class RenderService : Service() {
 
     override fun onDestroy() {
         releaseWakeLock()
-        queue.close()
+        wake.close()
         super.onDestroy()
     }
 
@@ -305,6 +343,7 @@ class RenderService : Service() {
         private const val CHANNEL = "onse_render"
         private const val NOTIFICATION_ID = 92_003
         const val DEFAULT_BITRATE_KBPS = 48
+        const val SPEAKER_TTS = "tts"
 
         private val cancelledRequests = ConcurrentHashMap<String, Boolean>()
 
