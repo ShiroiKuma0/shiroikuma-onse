@@ -19,19 +19,28 @@ done and verified, device facts learned the hard way, how the voice assets are g
 - **`.claude/skills/build-apk/SKILL.md`** — identity, the build, signing, versioning.
 - **`.claude/skills/upstream-new-version/SKILL.md`** — the proceed-gated upstream sync.
 
-## Current status (2026-10-02)
+## Current status (2026-11-02)
 
-Everything planned is built, verified on the Mate XT and pushed; the phone runs `1.0+009`.
+Everything planned is built, verified on the Mate XT and pushed; the latest release is **`1.0+016`**
+(GitHub releases since `1.0+013`, tags without `v`).
 - Japanese: every VOICEVOX voice (No.7 / 読み聞かせ bundled, the rest downloadable, bundled samples).
 - English: Kokoro-82M via sherpa-onnx (28 voices, default **am_michael**, model downloaded in-app).
 - Czech (2026-10-11/12): Piper cs_CZ **jirka** and **kasandra** via sherpa-onnx (`lang=cs`), one model per
   voice downloaded in-app; kasandra is converted by us and hosted on the GitHub release **`voices`**.
-- Render service for sister apps (`docs/sister-app-contract-onse-render.md`) — 言語島 in
-  自由作業盤 renders all its Japanese and English audio here; 白い熊 暗記 gets those files through
-  jiyusagyoban's sync. Suite design record: `~/git/shiroikuma-jiyusagyoban/docs/gengoshima.md`.
+- Render service for sister apps (`docs/sister-app-contract-onse-render.md`), two callers:
+  - 言語島 in 自由作業盤 renders all its Japanese, English and Czech audio here; 白い熊 暗記 gets those
+    files through jiyusagyoban's sync. Suite design record: `~/git/shiroikuma-jiyusagyoban/docs/gengoshima.md`.
+  - 白い熊 地図 (`shiroikuma.chizu`, from `1.0+016` / 地図 `5.5.0+025`) pre-renders navigation prompts
+    one sentence per item as WAV with `speaker=tts` (the TTS engine's own voice and settings), sends a
+    prompt that is due now with `priority=high`, and plays the files itself. Measured on the Mate XT:
+    VOICEVOX takes ~0.8× the audio length; Opus encoding adds ~5 s per 10 s of speech.
+  - Japanese items reply with `kana` (from `1.0+014`); every item with `render_ms` (from `1.0+016`).
 - 白い熊 音声 UI, Export / Import, 保存復元 automation v2, PING / WarmActivity, the all-files and
   battery-exemption checks on every entry (EMUI refuses cold background starts without the exemption).
-- Open: no GitHub release published yet; jiyusagyoban's 保存復元 roster task for 音声 not yet made.
+- The automation data door admits only 応用管理 and 自由作業盤 (pinned certificates); 地図 is
+  deliberately not on that list — its wake-up `describe` call is refused but still starts the process.
+- Open: jiyusagyoban's 「保存 ⇨ shiroikuma.onse」 保存復元 roster task not yet made (jiyusagyoban's work);
+  地図's first drive with the pre-rendered prompts not yet reported.
 
 ## Branch & remote model (same as the sister forks)
 
