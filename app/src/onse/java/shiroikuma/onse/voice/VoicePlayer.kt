@@ -132,6 +132,7 @@ object VoicePlayer {
     }
 
     fun stop() {
+        shiroikuma.onse.production.Production.stopPlayback() // the dashboard's clip — still one sound at a time
         job?.cancel()
         job = null
         track?.let { runCatching { it.stop(); it.release() } }

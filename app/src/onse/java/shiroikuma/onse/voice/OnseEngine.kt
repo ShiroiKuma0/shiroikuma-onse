@@ -135,15 +135,43 @@ object OnseEngine {
         val s = synth(context)
         val t0 = System.currentTimeMillis()
         val q = s.createAudioQuery(text, style)
+        applySettings(q, settings, rateFactor)
+        val wav = s.synthesis(q, style).perform()
+        Log.d(TAG, "style $style: ${text.length} chars in ${System.currentTimeMillis() - t0} ms")
+        return wav to q.kana
+    }
+
+    private fun applySettings(q: jp.hiroshiba.voicevoxcore.AudioQuery, settings: VoiceSettings, rateFactor: Float) {
         q.speedScale = (settings.speedPct / 100.0 * rateFactor).coerceIn(0.5, 2.0)
         q.pitchScale = settings.pitchPct / 100.0
         q.intonationScale = settings.intonationPct / 100.0
         q.volumeScale = settings.volumePct / 100.0
         q.prePhonemeLength = settings.prePauseMs / 1000.0
         q.postPhonemeLength = settings.postPauseMs / 1000.0
-        val wav = s.synthesis(q, style).perform()
-        Log.d(TAG, "style $style: ${text.length} chars in ${System.currentTimeMillis() - t0} ms")
-        return wav to q.kana
+    }
+
+    /** The reading VOICEVOX gives [text] with [styleId] (AquesTalk-style kana), without synthesising. */
+    @Synchronized
+    fun kanaFor(context: Context, text: String, styleId: Int): String {
+        val style = resolveStyle(context, styleId)
+        val model = VoiceCatalog.get(context).modelFor(style) ?: error("no model for style $style")
+        ensureLoaded(context, model)
+        return synth(context).createAudioQuery(text, style).kana ?: ""
+    }
+
+    /**
+     * Speak an edited reading ([kana], AquesTalk-style: `'` accent, `/` phrase, `、` pause, `_`
+     * devoiced) instead of text; throws when CORE cannot parse it. 16-bit mono PCM at [SAMPLE_RATE].
+     */
+    @Synchronized
+    fun synthesizePcmFromKana(context: Context, kana: String, styleId: Int, settings: VoiceSettings): ByteArray {
+        val style = resolveStyle(context, styleId)
+        val model = VoiceCatalog.get(context).modelFor(style) ?: error("no model for style $style")
+        ensureLoaded(context, model)
+        val s = synth(context)
+        val q = s.createAudioQueryFromKana(kana, style)
+        applySettings(q, settings, 1f)
+        return pcmFromWav(s.synthesis(q, style).perform())
     }
 
     /** The PCM payload of a WAV (skips the RIFF header chunks). */

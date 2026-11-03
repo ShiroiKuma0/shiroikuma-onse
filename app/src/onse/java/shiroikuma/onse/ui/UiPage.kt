@@ -77,7 +77,9 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
     var colorTarget by remember { mutableStateOf<ColorTarget?>(null) }
     var fontPicker by remember { mutableStateOf(false) }
     var fontsRefresh by remember { mutableIntStateOf(0) }
-    var folderDialog by remember { mutableStateOf(false) }
+    var directoryDialog by remember { mutableStateOf(false) }
+    var saveDirDialog by remember { mutableStateOf(false) }
+    val out by shiroikuma.onse.production.Production.out.collectAsState()
     var eximPanel by remember { mutableStateOf(false) }
     var eximRefresh by remember { mutableIntStateOf(0) }
     var resetConfirm by remember { mutableStateOf(false) }
@@ -109,7 +111,7 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
             item { SectionHeader("Export / Import", p, first = true) }
             item {
                 val dir = status.first
-                RowScaffold(0, p, onClick = { folderDialog = true }) {
+                RowScaffold(0, p, onClick = { directoryDialog = true }) {
                     TitledText(
                         "Backup directory (tap to choose)",
                         dir ?: "Not set — tap to choose a directory",
@@ -267,12 +269,12 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
             item { SectionHeader("Main screen", p) }
             item { PreviewCard(0, p) { MainScreenPreview(p) } }
             item {
-                SliderRow(0, p, "Speak button height", p.speakButtonHeightDp, dp(p.speakButtonHeightDp), UiPrefs.BUTTON_HEIGHT_MIN..UiPrefs.BUTTON_HEIGHT_MAX, 2) { v ->
+                SliderRow(0, p, "Generate button height", p.speakButtonHeightDp, dp(p.speakButtonHeightDp), UiPrefs.BUTTON_HEIGHT_MIN..UiPrefs.BUTTON_HEIGHT_MAX, 2) { v ->
                     UiStore.update { it.copy(speakButtonHeightDp = v) }
                 }
             }
             item {
-                SliderRow(0, p, "Try-it text size", p.tryTextSizeSp, "${p.tryTextSizeSp} sp", UiPrefs.TEXT_SIZE_MIN..UiPrefs.TEXT_SIZE_MAX) { v ->
+                SliderRow(0, p, "Phrase text size", p.tryTextSizeSp, "${p.tryTextSizeSp} sp", UiPrefs.TEXT_SIZE_MIN..UiPrefs.TEXT_SIZE_MAX) { v ->
                     UiStore.update { it.copy(tryTextSizeSp = v) }
                 }
             }
@@ -284,6 +286,38 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
             item {
                 SliderRow(0, p, "Card padding", p.cardPadDp, dp(p.cardPadDp), 0..UiPrefs.PAD_MAX) { v ->
                     UiStore.update { it.copy(cardPadDp = v) }
+                }
+            }
+
+            // ---- Production — where the dashboard's Save writes, and how ----------------------
+            item { SectionHeader("Production", p) }
+            item {
+                RowScaffold(0, p, onClick = { saveDirDialog = true }) {
+                    TitledText("Save directory", out.dir, Modifier.weight(1f))
+                    Pill("Change") { saveDirDialog = true }
+                }
+            }
+            item {
+                RowScaffold(0, p) {
+                    TitledText(
+                        "Format",
+                        if (shiroikuma.onse.production.Production.usableFormat(shiroikuma.onse.production.OutFormat.OGG) == shiroikuma.onse.production.OutFormat.OGG)
+                            "Save and Share write this. OGG / Opus is small; WAV is what every editor opens."
+                        else "This phone has no Opus encoder — WAV is written whatever is chosen.",
+                        Modifier.weight(1f),
+                    )
+                }
+            }
+            item {
+                Row(Modifier.padding(start = rowIndent(0, p), bottom = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    shiroikuma.onse.production.OutFormat.entries.forEach { f ->
+                        Pill(if (f == out.format) "✓ ${f.label}" else f.label) { shiroikuma.onse.production.Production.setOut { it.copy(format = f) } }
+                    }
+                }
+            }
+            item {
+                SliderRow(0, p, "Opus bitrate", out.bitrateKbps, "${out.bitrateKbps} kbps", shiroikuma.onse.production.Production.BITRATE_MIN..shiroikuma.onse.production.Production.BITRATE_MAX, 8) { v ->
+                    shiroikuma.onse.production.Production.setOut { it.copy(bitrateKbps = v) }
                 }
             }
 
@@ -349,11 +383,17 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
             onDelete = { f -> UiStore.deleteFont(f); fontsRefresh++ },
         )
     }
-    if (folderDialog) {
-        FolderDialog(Backup.dir(context), onDismiss = { folderDialog = false }) { path ->
+    if (directoryDialog) {
+        DirectoryDialog("Backup directory", Backup.dir(context), onDismiss = { directoryDialog = false }) { path ->
             Backup.setDir(context, path)
-            folderDialog = false
+            directoryDialog = false
             eximRefresh++
+        }
+    }
+    if (saveDirDialog) {
+        DirectoryDialog("Save directory", out.dir, onDismiss = { saveDirDialog = false }) { path ->
+            shiroikuma.onse.production.Production.setOut { it.copy(dir = path.trim().trimEnd('/')) }
+            saveDirDialog = false
         }
     }
     if (resetConfirm) {
@@ -364,7 +404,7 @@ fun UiPage(appVersion: String, onBack: () -> Unit) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     Pill("Cancel") { resetConfirm = false }
                     Spacer(Modifier.width(8.dp))
-                    Pill("Restore") { UiStore.resetToDefaults(); resetConfirm = false }
+                    Pill("Restore", main = true) { UiStore.resetToDefaults(); resetConfirm = false }
                 }
             }
         }
@@ -471,7 +511,7 @@ private fun MainScreenPreview(p: UiPrefs) {
             Modifier.fillMaxWidth().height(p.speakButtonHeightDp.dp).clip(RoundedCornerShape(p.buttonCornerPct.coerceIn(0, 50)))
                 .border(p.buttonBorderWidthDp.dp, Color(p.accent), RoundedCornerShape(p.buttonCornerPct.coerceIn(0, 50))),
             contentAlignment = Alignment.Center,
-        ) { Text("▶ 話す", color = Color(p.accent), fontSize = (p.speakButtonHeightDp / 3).coerceIn(12, 48).sp, fontWeight = FontWeight.Bold) }
+        ) { Text("▶ Generate", color = Color(p.accent), fontSize = (p.speakButtonHeightDp / 3).coerceIn(12, 48).sp, fontWeight = FontWeight.Bold) }
         repeat(2) { i ->
             Text(
                 if (i == 0) "▶  No.7（読み聞かせ）  ✓" else "▶  四国めたん（ノーマル）  ⤓ 59 MB",
@@ -531,7 +571,7 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
     var refresh by remember { mutableIntStateOf(0) }
     var busy by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf<EximInfo?>(null) }
-    var folderDialog by remember { mutableStateOf(false) }
+    var directoryDialog by remember { mutableStateOf(false) }
     var importList by remember { mutableStateOf<List<File>?>(null) }
     val selected = remember { mutableStateMapOf<Backup.Cat, Boolean>().apply { Backup.Cat.entries.forEach { put(it, it.defaultOn) } } }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -544,7 +584,7 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
 
     fun ready(): Boolean {
         if (!Backup.hasAllFilesAccess()) { requestAllFilesAccess(context); return false }
-        if (Backup.dir(context) == null) { folderDialog = true; return false }
+        if (Backup.dir(context) == null) { directoryDialog = true; return false }
         return true
     }
 
@@ -552,11 +592,11 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 20.dp)) {
             Text("Export / Import", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 2.dp, bottom = 6.dp))
             Text(
-                "Pick the parts to back up, choose a folder once, then Export or Import. Backups are plain .zip files you can copy anywhere.",
+                "Pick the parts to back up, choose a directory once, then Export or Import. Backups are plain .zip files you can copy anywhere.",
                 fontSize = 13.sp, color = Color(p.textSecondary).copy(alpha = 0.85f), modifier = Modifier.padding(bottom = 10.dp),
             )
             if (!hasAccess) {
-                Text("All-files access is required to read and write the backup folder.", fontSize = 13.sp, color = Color(p.errorColor))
+                Text("All-files access is required to read and write the backup directory.", fontSize = 13.sp, color = Color(p.errorColor))
                 Pill("Grant all-files access", modifier = Modifier.padding(top = 6.dp)) { requestAllFilesAccess(context) }
                 Spacer(Modifier.height(6.dp))
             }
@@ -564,14 +604,14 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
             Column(
                 Modifier.fillMaxWidth().padding(vertical = 6.dp).clip(RoundedCornerShape(10.dp))
                     .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
-                    .clickable(enabled = !busy) { folderDialog = true }.padding(horizontal = 12.dp, vertical = 10.dp),
+                    .clickable(enabled = !busy) { directoryDialog = true }.padding(horizontal = 12.dp, vertical = 10.dp),
             ) {
-                Text("Backup folder", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary)
+                Text("Backup directory", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary)
                 Text(dir ?: "Not set — tap to choose", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = if (dir == null) Color(p.errorColor) else MaterialTheme.colorScheme.primary)
             }
             val (msg, warn) = when {
-                dir == null -> "Set a backup folder first." to true
-                latest == null -> "No backup found in this folder yet." to true
+                dir == null -> "Set a backup directory first." to true
+                latest == null -> "No backup found in this directory yet." to true
                 else -> "Last backup: ${latest.whenText}" to false
             }
             Text(msg, fontSize = 14.sp, color = if (warn) Color(p.errorColor) else Color(p.textSecondary).copy(alpha = 0.8f), modifier = Modifier.padding(start = 2.dp, bottom = 8.dp))
@@ -595,7 +635,7 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
                     if (cats().isEmpty()) { info = EximInfo.Failure("No categories selected."); return@Pill }
                     if (!ready()) return@Pill
                     val list = Backup.backups(Backup.dir(context))
-                    if (list.isEmpty()) info = EximInfo.Failure("No backups in this folder to import.") else importList = list
+                    if (list.isEmpty()) info = EximInfo.Failure("No backups in this directory to import.") else importList = list
                 }
                 Spacer(Modifier.width(8.dp))
                 Pill("Export", enabled = !busy) {
@@ -616,9 +656,9 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
         }
     }
 
-    if (folderDialog) {
-        FolderDialog(Backup.dir(context), onDismiss = { folderDialog = false }) { path ->
-            Backup.setDir(context, path); folderDialog = false; refresh++; onDirChanged()
+    if (directoryDialog) {
+        DirectoryDialog("Backup directory", Backup.dir(context), onDismiss = { directoryDialog = false }) { path ->
+            Backup.setDir(context, path); directoryDialog = false; refresh++; onDirChanged()
         }
     }
     importList?.let { list ->
@@ -650,7 +690,7 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
     when (val cur = info) {
         is EximInfo.ExportDone -> InfoDialog("✓ Export — 100% success", cur.message) {
             // OK closes the info dialog, the panel beneath it AND the UI page.
-            Pill("OK") { info = null; onCloseChain() }
+            Pill("OK", main = true) { info = null; onCloseChain() }
         }
         is EximInfo.ImportDone -> InfoDialog("✓ Import — 100% success", "Restored:\n\n${cur.lines.joinToString("\n")}\n\nRestart to apply everything.") {
             Pill("Later") { info = null; onCloseChain() }
@@ -658,7 +698,7 @@ private fun ExportImportPanel(appVersion: String, onDismiss: () -> Unit, onClose
             Pill("Restart now") { restartApp(context) }
         }
         // A failure leaves the panel open underneath — only the info dialog closes.
-        is EximInfo.Failure -> InfoDialog("Export / Import", cur.message, warn = true) { Pill("OK") { info = null } }
+        is EximInfo.Failure -> InfoDialog("Export / Import", cur.message, warn = true) { Pill("OK", main = true) { info = null } }
         null -> Unit
     }
 }

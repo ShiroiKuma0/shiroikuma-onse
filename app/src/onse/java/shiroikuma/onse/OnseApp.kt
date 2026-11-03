@@ -9,5 +9,6 @@ class OnseApp : Application() {
         super.onCreate()
         UiStore.init(this)
         VoiceSettingsStore.init(this)
+        shiroikuma.onse.production.Production.init(this)
     }
 }

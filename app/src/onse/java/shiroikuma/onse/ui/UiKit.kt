@@ -247,26 +247,28 @@ fun PreviewCard(level: Int, p: UiPrefs, content: @Composable () -> Unit) {
     ) { content() }
 }
 
-/** ArcaneChat-style pill: black fill, accent stroke, accent text, fully rounded by default. */
+/**
+ * The black-yellow pill (the house theme, 白い熊 2026-11-02/03): never filled — an accent frame with
+ * the background showing through. The [main] action of a block has a 3 dp frame and bold text,
+ * every other action a 1.25 dp frame and normal text; disabled is the accent at 38 %.
+ */
 @Composable
-fun Pill(label: String, enabled: Boolean = true, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    val p = UiStore.prefs.value
+fun Pill(label: String, enabled: Boolean = true, modifier: Modifier = Modifier, main: Boolean = false, onClick: () -> Unit) {
+    val accent = MaterialTheme.colorScheme.primary
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier,
-        shape = RoundedCornerShape(p.buttonCornerPct.coerceIn(0, 50)),
-        border = BorderStroke(
-            (p.buttonBorderWidthDp.toFloat() * 0.75f).dp,
-            MaterialTheme.colorScheme.primary.copy(alpha = if (enabled) 1f else 0.4f),
-        ),
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(if (main) 3.dp else 1.25.dp, if (enabled) accent else accent.copy(alpha = 0.38f)),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.primary,
-            disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+            containerColor = Color.Transparent,
+            contentColor = accent,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = accent.copy(alpha = 0.38f),
         ),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 6.dp),
-    ) { Text(label, maxLines = 1) }
+    ) { Text(label, maxLines = 1, fontWeight = if (main) FontWeight.Bold else null) }
 }
 
 /** Black box, yellow 2 dp border, 16 dp corners — every dialog of the app. */
@@ -444,34 +446,34 @@ fun FontPickerDialog(
             Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                 Pill("Import font…", onClick = onAddFont)
                 Spacer(Modifier.weight(1f))
-                Pill("Close", onClick = onDismiss)
+                Pill("Cancel", onClick = onDismiss)
             }
         }
     }
 }
 
-// ---- folder chooser (kxkb: a typed path, or Browse in an in-app folder list) -------------------
+// ---- directory chooser (kxkb: a typed path, or Browse in an in-app directory list) -------------
 
 @Composable
-fun FolderDialog(initial: String?, onDismiss: () -> Unit, onSave: (String) -> Unit) {
+fun DirectoryDialog(title: String, initial: String?, onDismiss: () -> Unit, onSave: (String) -> Unit) {
     var path by remember { mutableStateOf(initial ?: "/storage/emulated/0/") }
     var browsing by remember { mutableStateOf(false) }
     HouseDialog(onDismiss) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            DialogTitle("Backup folder")
-            Text("Enter a full path, or Browse to pick a folder.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+            DialogTitle(title)
+            Text("Enter a full path, or Browse to pick a directory.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
             OutlinedTextField(value = path, onValueChange = { path = it }, singleLine = true, colors = houseFieldColors(), modifier = Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Pill("Cancel", onClick = onDismiss)
                 Spacer(Modifier.weight(1f))
                 Pill("Browse") { browsing = true }
                 Spacer(Modifier.width(8.dp))
-                Pill("Save", enabled = path.isNotBlank()) { onSave(path) }
+                Pill("Save", enabled = path.isNotBlank(), main = true) { onSave(path) }
             }
         }
     }
     if (browsing) {
-        FolderBrowser(start = File(path.ifBlank { "/storage/emulated/0" }), onDismiss = { browsing = false }) {
+        DirectoryBrowser(start = File(path.ifBlank { "/storage/emulated/0" }), onDismiss = { browsing = false }) {
             path = it.absolutePath
             browsing = false
         }
@@ -479,7 +481,7 @@ fun FolderDialog(initial: String?, onDismiss: () -> Unit, onSave: (String) -> Un
 }
 
 @Composable
-private fun FolderBrowser(start: File, onDismiss: () -> Unit, onUse: (File) -> Unit) {
+private fun DirectoryBrowser(start: File, onDismiss: () -> Unit, onUse: (File) -> Unit) {
     var dir by remember { mutableStateOf(generateSequence(start) { it.parentFile }.firstOrNull { it.isDirectory } ?: File("/storage/emulated/0")) }
     HouseDialog(onDismiss) {
         Column(Modifier.padding(20.dp)) {
@@ -492,7 +494,7 @@ private fun FolderBrowser(start: File, onDismiss: () -> Unit, onUse: (File) -> U
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                 )
-                entry("✓ Use this folder") { onUse(dir) }
+                entry("✓ Use this directory") { onUse(dir) }
                 dir.parentFile?.let { parent -> entry(".. (${parent.name.ifEmpty { "/" }})") { dir = parent } }
                 dir.listFiles().orEmpty().filter { it.isDirectory && !it.name.startsWith(".") }.sortedBy { it.name.lowercase() }
                     .forEach { sub -> entry("📁 ${sub.name}") { dir = sub } }
