@@ -6,11 +6,11 @@
 
 **Offline speech on Android in Japanese, English and Czech — a system text-to-speech voice and an intent-driven audio render service for the 白い熊 sister apps.**
 
-A fork of [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_TTS_Engine_For_Android) with **major additions**: every VOICEVOX voice, English (Kokoro) and Czech (Piper) voices, a render service that writes OGG/Opus files for other apps, a full main screen and a themable settings page with backup and restore.
+A fork of [VOICEVOX TTS Engine for Android](https://github.com/0266st/VOICEVOX_TTS_Engine_For_Android) with **major additions**: every VOICEVOX voice, English (Kokoro) and Czech (Piper) voices, a voice production dashboard per language (generate, save, share), a render service that writes OGG/Opus files for other apps and a themable settings page with backup and restore.
 
 Installs **side-by-side** with the original (app id `shiroikuma.onse`).
 
-**📥 Latest release: [`1.0+016`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
+**📥 Latest release: [`1.0+019`](https://github.com/ShiroiKuma0/shiroikuma-onse/releases/latest)** — [all releases & APK downloads »](https://github.com/ShiroiKuma0/shiroikuma-onse/releases)
 
 </div>
 
@@ -26,7 +26,7 @@ default at speed 1.15; every other model downloads in-app, verified by SHA-256.
 ## 🌐 English and Czech too
 **English:** Kokoro-82M with 28 US and UK voices (default am_michael). **Czech:** Piper’s **jirka**
 (male) and **kasandra** (female). Both run through sherpa-onnx, fully offline; each model downloads
-in-app on request, and the try-it box picks the language from the text you type.
+in-app on request.
 
 ---
 
@@ -48,9 +48,14 @@ from the app.
 
 ---
 
-## 🧭 One screen per language
-The main screen shows the engine status and a big try-it box, then a section each for Japanese,
-English and Czech: the current voice and all its settings on top, every other voice folded away.
+## 🎛️ A production dashboard, one tab per language
+Folder tabs **日本語 · English · Čeština** — swipe between them. Each opens on a dashboard: type a
+phrase, see the voice and settings it will be spoken with, change any of them **for this phrase
+only** (changed ones light up; one tap goes back to the saved settings, another makes them the new
+saved ones), **Generate**, watch the waveform play, then **Save** it as OGG/Opus or WAV — whole, or
+split into sentences — or **Share** it to any app. For Japanese, the **reading** VOICEVOX will speak
+is editable, to fix a misread kanji or accent. Recent phrases are kept with their audio, and text
+shared or selected in any app lands in the right tab, ready to speak.
 
 ---
 

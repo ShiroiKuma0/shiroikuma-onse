@@ -19,9 +19,9 @@ done and verified, device facts learned the hard way, how the voice assets are g
 - **`.claude/skills/build-apk/SKILL.md`** — identity, the build, signing, versioning.
 - **`.claude/skills/upstream-new-version/SKILL.md`** — the proceed-gated upstream sync.
 
-## Current status (2026-11-02)
+## Current status (2026-11-03)
 
-Everything planned is built, verified on the Mate XT and pushed; the latest release is **`1.0+016`**
+Everything planned is built, verified on the Mate XT and pushed; the latest release is **`1.0+019`**
 (GitHub releases since `1.0+013`, tags without `v`).
 - Japanese: every VOICEVOX voice (No.7 / 読み聞かせ bundled, the rest downloadable, bundled samples).
 - English: Kokoro-82M via sherpa-onnx (28 voices, default **am_michael**, model downloaded in-app).
@@ -35,6 +35,10 @@ Everything planned is built, verified on the Mate XT and pushed; the latest rele
     prompt that is due now with `priority=high`, and plays the files itself. Measured on the Mate XT:
     VOICEVOX takes ~0.8× the audio length; Opus encoding adds ~5 s per 10 s of speech.
   - Japanese items reply with `kana` (from `1.0+014`); every item with `render_ms` (from `1.0+016`).
+- Main screen (`1.0+017`–`019`): 日本語 / English / Čeština folder tabs (swipeable), each opening on a
+  voice production dashboard — phrase, per-phrase setting overrides over the saved settings, Japanese
+  reading edit, Generate / Play with waveform, Save (optional sentence split) / Share, recent phrases;
+  Share / text-selection from other apps lands in the right tab (`production/`, `ui/FolderTabBar.kt`).
 - 白い熊 音声 UI, Export / Import, 保存復元 automation v2, PING / WarmActivity, the all-files and
   battery-exemption checks on every entry (EMUI refuses cold background starts without the exemption).
 - The automation data door admits only 応用管理 and 自由作業盤 (pinned certificates); 地図 is

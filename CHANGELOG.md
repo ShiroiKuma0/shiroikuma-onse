@@ -4,6 +4,63 @@ This file carries both histories: 白い熊 音声's releases first, newest firs
 Upstream (0266st/VOICEVOX_TTS_Engine_For_Android) publishes no changelog of its own, so its section
 below is written from its tags, merged pull requests and commit history.
 
+## 白い熊 音声 1.0+019 — 2026-11-03
+
+Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
+
+**The main screen is rebuilt around a voice production dashboard, one tab per language.**
+
+### Language tabs
+- **Folder tabs 日本語 · English · Čeština** at the top, drawn like 白い熊 メッセージ's tab bar
+  (stacked paper folders, slanted right edge, one line wrapping the active tab). The last tab is
+  remembered; each tab keeps its own scroll position.
+- **Swipe** left and right between the tabs; the tab bar follows.
+- Each tab holds only its language: the dashboard, then that language's **Saved settings** (the
+  former voice section — current voice, its knobs, every other voice folded), then Engine and About.
+  The old try-it box is gone.
+
+### Voice production dashboard
+- **Phrase** box per language, kept between launches, with ✕ to clear.
+- **Spoken with** — chips for every setting of the language (Japanese: voice, speed, pitch,
+  intonation, volume, pause before, pause after; English and Czech: voice, speed). They show the saved
+  settings and follow every change made below. A tap changes one **for this phrase only**: a voice
+  picker with ▶ samples (Japanese lists installed voices by character), or a live slider with
+  Cancel / Done. A changed chip is drawn filled, with its own ↺.
+- **↺ Saved settings** drops every change; **★ Make saved** writes them into the saved settings
+  after showing what changes (the app's voice for Android's text-to-speech and the sister apps too).
+- **Reading** (Japanese): the kana VOICEVOX makes of the phrase, editable to fix a misread kanji or
+  an accent; an edited reading is spoken instead of the text (`createAudioQueryFromKana`).
+- **▶ Generate**, then **▶ Play / ■ Stop** while the clip is current, with a progress bar while
+  synthesising.
+- **Waveform** of the clip with a moving playhead; a tap plays from there; the time, and how long the
+  clip took to make. A changed phrase or setting marks the clip as out of date.
+- **⤓ Save**: file name (date stamp + the start of the phrase), OGG/Opus or WAV, directory (default
+  `Music/白い熊 音声`) — remembered. Optional **Split into sentences**: a file each (`name_01` …) or
+  one joined file with a 0–2000 ms pause; off by default, so the phrase is saved as written.
+- **⇪ Share** to any app through Android's share sheet (a `FileProvider`, the clip only).
+- Save and Share generate first when the phrase or its settings changed.
+- Missing English model or Czech voice: a red note and Generate disabled.
+
+### Recent phrases
+- The last 30 generated phrases per language, with their audio, folded under the dashboard:
+  ▶ / ■, ⤓ Save, ⇪ Share, ✕ Delete, Clear (confirmed). A tap on the text brings the phrase back into
+  the dashboard with exactly the settings and reading it was spoken with, and its audio.
+
+### Text from other apps
+- **Share → 白い熊 音声** (`SEND` text/plain) and the text-selection menu's **白い熊 音声**
+  (`PROCESS_TEXT`) put the text into the dashboard of its language's tab — kana or kanji → 日本語,
+  a Czech letter → Čeština, otherwise English.
+
+### 白い熊 音声 UI
+- New **Production** section: save directory, format (OGG/Opus · WAV), Opus bitrate (16–128 kbps).
+- "Speak button height" / "Try-it text size" are now **Generate button height** / **Phrase text size**.
+
+### Look and wording
+- **Pills follow the black-yellow theme** everywhere: never filled; the main action of a block has a
+  3 dp frame and bold text, every other action 1.25 dp; disabled at 38 %.
+- **Every dialog has Cancel**; a slider dialog's Cancel (and back) restores the value it opened with.
+- The backup directory chooser is now a general directory dialog, and says "directory".
+
 ## 白い熊 音声 1.0+016 — 2026-11-02
 
 Built on upstream `master` at `7121048` (2026-09-30, PR #19 merged) — unchanged since 1.0+013.
